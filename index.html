@@ -649,10 +649,12 @@
         const dateStr = now.toLocaleDateString('th-TH', { year:'numeric', month:'2-digit', day:'2-digit' });
 
         stagedData.forEach(item => {
-          const docRef = db.collection("inventory").doc(item.sn);
+          // แปลง / เป็น _ สำหรับ Document ID (Firebase ไม่อนุญาต /)
+          const safeDocId = String(item.sn).replace(/\//g, '_');
+          const docRef = db.collection("inventory").doc(safeDocId);
           batch.set(docRef, {
             model: item.model,
-            sn: item.sn,
+            sn: item.sn,  // เก็บค่าดั้งเดิมที่มี /
             supplier: item.supplier,
             invoice: item.invoice,
             note: item.note,
@@ -698,7 +700,9 @@
         const models = new Set();
         const suppliers = new Set();
 
-        snapshot.forEach(doc => {if (data.model && data.model !== '-') models.add(data.model);
+        snapshot.forEach(doc => {
+          const data = doc.data();  // ประกาศตัวแปร data อย่างถูกต้อง
+          if (data.model && data.model !== '-') models.add(data.model);
           if (data.supplier && data.supplier !== '-') suppliers.add(data.supplier);
         });
 
