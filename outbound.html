@@ -623,8 +623,9 @@
           .get();
 
         if (snap.empty) {
-          // ลองหา doc ด้วย id ตรงๆ ด้วย (กรณี doc id = sn)
-          const byId = await db.collection("inventory").doc(sn).get();
+          // ลองหา doc ด้วย id ตรงๆ ด้วย โดยแปลง / เป็น _ สำหรับ Document ID
+          const safeDocId = String(sn).replace(/\//g, '_');
+          const byId = await db.collection("inventory").doc(safeDocId).get();
           if (byId.exists) {
             fillResult(sn, byId.data());
             return;
@@ -751,10 +752,13 @@
         const dateStr = now.toLocaleDateString('th-TH', { year:'numeric', month:'2-digit', day:'2-digit' });
 
         stagedData.forEach(item => {
+          // แปลง / เป็น _ สำหรับ Document ID
+          const safeDocId = String(item.sn).replace(/\//g, '_');
+          
           // เพิ่มใน outbound_stock
-          const outRef = db.collection("outbound_stock").doc(item.sn);
+          const outRef = db.collection("outbound_stock").doc(safeDocId);
           batch.set(outRef, {
-            sn:           item.sn,
+            sn:           item.sn,  // เก็บค่าดั้งเดิม
             model:        item.model,
             supplier:     item.supplier,
             invoice:      item.invoice,
@@ -763,7 +767,7 @@
             last_updated: now.toLocaleString('th-TH')
           });
           // ลบออกจาก inventory
-          const invRef = db.collection("inventory").doc(item.sn);
+          const invRef = db.collection("inventory").doc(safeDocId);
           batch.delete(invRef);
         });
 
