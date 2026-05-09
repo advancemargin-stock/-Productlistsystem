@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>ตรวจสอบสินค้า – AdvancedPlus Cloud</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   
@@ -15,619 +16,372 @@
     *, *::before, *::after { box-sizing: border-box; }
     body { background: #f5f5f7; font-family: 'IBM Plex Sans Thai', sans-serif; color: #1a1a2e; margin: 0; overscroll-behavior-y: none; }
 
-    /* ── SIDEBAR (DESKTOP) ── */
+    /* ── SIDEBAR (เหมือนหน้า Index เป๊ะ) ── */
     .sidebar { width: 240px; flex-shrink: 0; background: #ffffff; border-right: 1px solid #ececec; display: flex; flex-direction: column; padding: 28px 0; position: fixed; top: 0; left: 0; bottom: 0; z-index: 40; overflow-y: auto; }
     .sidebar-logo { padding: 0 20px 24px; border-bottom: 1px solid #f0f0f0; margin-bottom: 12px; }
     .sidebar-logo .brand { font-size: .95rem; font-weight: 800; letter-spacing: .04em; color: #1a1a2e; }
     .sidebar-logo .brand span { color: #ff5722; }
     .sidebar-logo .sub { font-size: .65rem; color: #aaa; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin-top: 4px; }
+    
+    .nav-section { font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #d1d5db; padding: 16px 24px 8px; margin-top: 4px; }
     .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; font-size: .85rem; font-weight: 600; color: #6b7280; text-decoration: none; transition: all .2s; position: relative; }
     .nav-item.active { color: #ff5722; background: #fff4f1; }
     .nav-item.active::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 4px; background: #ff5722; border-radius: 0 4px 4px 0; }
     .nav-item:hover:not(.active) { color: #374151; background: #fafafa; }
     .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-    .nav-section { font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #d1d5db; padding: 16px 24px 8px; margin-top: 4px; }
+
     .sidebar-footer { margin-top: auto; padding: 16px 20px 0; border-top: 1px solid #f0f0f0; }
     .user-chip { display: flex; align-items: center; gap: 12px; }
-    .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,#ff5722,#ff7043); display: flex; align-items: center; justify-content: center; color: #fff; font-size: .85rem; font-weight: 700; flex-shrink: 0; }
-    .user-name { font-size: .85rem; font-weight: 600; color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;}
-    .user-role { font-size: .7rem; color: #9ca3af; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;}
+    .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,#ff5722,#ff7043); display: flex; align-items: center; justify-content: center; color: #fff; font-size: .85rem; font-weight: 700; }
 
     /* ── MAIN CONTENT ── */
     .page-wrap { margin-left: 240px; min-height: 100vh; padding-bottom: 80px; }
     .page-header { background: #fff; border-bottom: 1px solid #ececec; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 30; }
     .page-title { font-size: 1.4rem; font-weight: 800; color: #1a1a2e; }
-    .header-actions { display: flex; align-items: center; gap: 16px; }
-    .last-check { font-size: .75rem; color: #9ca3af; display: flex; flex-direction: column; align-items: flex-end; }
-    .btn-sync { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; cursor: pointer; color: #4b5563; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
-    .btn-sync:hover { background: #f3f4f6; color: #ff5722; border-color: #ff5722; }
-    .btn-sync.spinning svg { animation: spin 1s linear infinite; }
 
-    /* ── CONTENT ── */
+    /* ── UI COMPONENTS ── */
     .page-content { padding: 32px; max-width: 1200px; margin: 0 auto; }
     .input-section { background: #fff; border: 1px solid #ececec; border-radius: 16px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,.02); margin-bottom: 24px; }
-    .input-section-title { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-    .field-label { font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #6b7280; margin-bottom: 8px; }
-    .input-group { display: flex; gap: 12px; align-items: flex-end; }
-    .input-group-item { flex: 1; }
-    .field { width: 100%; background: #fafafa; border: 1.5px solid #e8e8e8; border-radius: 10px; color: #1a1a2e; padding: 14px 16px; font-size: .95rem; font-family: 'IBM Plex Sans Thai', sans-serif; outline: none; transition: all .2s; }
-    .field:focus { background: #fff; border-color: #ff5722; box-shadow: 0 0 0 3px rgba(255, 87, 34, .1); }
-    .btn-search { background: linear-gradient(135deg, #ff5722, #ff7043); color: #fff; border: none; border-radius: 10px; padding: 14px 28px; font-weight: 700; cursor: pointer; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: .95rem; box-shadow: 0 4px 12px rgba(255, 87, 34, .3); white-space: nowrap; transition: all .2s; }
-    .btn-search:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(255, 87, 34, .4); }
-
-    .content-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-    .column-card { background: #fff; border: 1px solid #ececec; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.02); display: flex; flex-direction: column; overflow: hidden; height: 500px; }
-    .column-header { background: #fafafa; border-bottom: 1px solid #ececec; color: #1a1a2e; padding: 16px 20px; font-weight: 700; font-size: .95rem; display: flex; justify-content: space-between; align-items: center; }
-    .checked-header { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; }
-    .column-count { background: #e5e7eb; color: #4b5563; padding: 4px 12px; border-radius: 20px; font-size: .75rem; font-weight: 700; }
-    .checked-header .column-count { background: rgba(255, 255, 255, .2); color: #fff; }
+    .field { width: 100%; background: #fafafa; border: 1.5px solid #e8e8e8; border-radius: 10px; padding: 14px 16px; outline: none; transition: all .2s; }
+    .field:focus { border-color: #ff5722; background: #fff; box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1); }
     
+    .content-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+    .column-card { background: #fff; border: 1px solid #ececec; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; height: 500px; }
+    .column-header { background: #fafafa; border-bottom: 1px solid #ececec; padding: 16px 20px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
     .product-list { flex: 1; overflow-y: auto; padding: 16px; }
-    .product-item { background: #fff; border: 1.5px solid #f3f4f6; border-radius: 12px; padding: 14px; margin-bottom: 12px; cursor: pointer; transition: all .2s; display: flex; justify-content: space-between; align-items: center; }
-    .product-item:hover { border-color: #ff5722; box-shadow: 0 4px 12px rgba(255, 87, 34, .1); transform: translateX(4px); }
-    .product-name { font-weight: 600; color: #1a1a2e; font-size: .9rem; flex: 1; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .product-info { font-size: .75rem; color: #6b7280; font-family: 'JetBrains Mono', monospace; }
-    .warehouse-badge { font-size: .7rem; font-weight: 600; padding: 4px 8px; border-radius: 6px; flex-shrink: 0; margin-left: 12px; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-    .warehouse-badge.multiple { background: #fef08a; color: #854d0e; border-color: #fde047; }
+    
+    .product-item { background: #fff; border: 1.5px solid #f3f4f6; border-radius: 12px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all .2s; display: flex; justify-content: space-between; align-items: center; }
+    .product-item:hover { border-color: #ff5722; transform: translateX(4px); }
+    
+    .warehouse-badge { font-size: .65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: #f1f5f9; color: #475569; }
+    .warehouse-badge.multiple { background: #fef08a; color: #854d0e; }
 
-    .selected-item { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
-    .selected-item-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-    .selected-item-name { font-weight: 700; color: #166534; font-size: .9rem; flex: 1; }
-    .selected-item-sn { font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: #15803d; background: rgba(21, 128, 61, .1); padding: 4px 8px; border-radius: 6px; width: fit-content; }
-    .btn-remove { background: #fee2e2; color: #dc2626; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: .75rem; font-weight: 600; flex-shrink: 0; transition: background .2s; }
-    .btn-remove:hover { background: #fecaca; }
-    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; font-size: .9rem; height: 100%; min-height: 200px; padding: 20px; text-align: center; }
-
-    .button-section { display: flex; gap: 16px; justify-content: flex-end; }
-    .btn-primary { background: linear-gradient(135deg, #ff5722, #ff7043); color: #fff; border: none; border-radius: 12px; padding: 16px 32px; font-weight: 700; cursor: pointer; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 1rem; box-shadow: 0 4px 18px rgba(255, 87, 34, .3); transition: all .2s; flex: 1; max-width: 300px; }
-    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 87, 34, .4); }
-    .btn-primary:disabled { background: #d1d5db; box-shadow: none; cursor: not-allowed; color: #9ca3af; }
-    .btn-secondary { background: #fff; color: #4b5563; border: 1.5px solid #d1d5db; border-radius: 12px; padding: 16px 32px; font-weight: 600; cursor: pointer; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 1rem; transition: all .2s; }
-    .btn-secondary:hover { background: #f3f4f6; color: #1f2937; }
-
-    /* ── TOAST NOTIFICATIONS ── */
-    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 60; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-    .toast { padding: 16px 24px; border-radius: 12px; font-size: .9rem; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,.1); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: auto; }
+    /* ── TOAST ── */
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
+    .toast { padding: 14px 20px; border-radius: 12px; background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 10px; border-left: 4px solid #ff5722; }
     .toast.show { transform: translateX(0); }
-    .toast-success { background: #f0fdf4; border-left: 4px solid #10b981; color: #065f46; }
-    .toast-error { background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; }
-    .toast-info { background: #eff6ff; border-left: 4px solid #3b82f6; color: #1e3a8a; }
 
     @keyframes spin { 100% { transform: rotate(360deg); } }
-    .loading-spinner { width: 24px; height: 24px; border: 3px solid #ffe4e0; border-top-color: #ff5722; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px; }
+    .spinner { width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid #ff5722; border-radius: 50%; animation: spin 1s linear infinite; }
 
-    /* ── MOBILE RESPONSIVE ── */
-    @media (max-width: 1024px) { .content-wrapper { grid-template-columns: 1fr; } .column-card { height: 400px; } }
+    /* ── MOBILE ── */
     @media (max-width: 768px) {
       .sidebar { display: none; }
-      .page-wrap { margin-left: 0; padding-bottom: 90px; }
-      .page-header { padding: 16px; flex-direction: row; }
-      .page-title { font-size: 1.2rem; }
-      .page-content { padding: 16px; }
-      .input-group { flex-direction: column; align-items: stretch; }
-      .btn-search { width: 100%; padding: 16px; }
-      .button-section { flex-direction: column-reverse; }
-      .btn-primary, .btn-secondary { max-width: 100%; width: 100%; }
-      .toast-container { top: 80px; right: 16px; left: 16px; }
-      .toast { width: 100%; justify-content: center; }
+      .page-wrap { margin-left: 0; }
+      .content-wrapper { grid-template-columns: 1fr; }
+      .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 10px 10px 25px; z-index: 50; }
     }
-
-    /* ── BOTTOM NAV (MOBILE) ── */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #ececec; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); display: none; justify-content: space-around; padding: 8px 8px 20px 8px; z-index: 50; }
-    @media (max-width: 768px) { .bottom-nav { display: flex; } }
-    .bn-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 4px; font-size: .65rem; font-weight: 600; color: #9ca3af; text-decoration: none; border: none; background: none; cursor: pointer; transition: all .2s; }
-    .bn-item.active { color: #ff5722; }
-    .bn-item svg { width: 22px; height: 22px; }
-
-    /* ── DRAWER (MOBILE MENU) ── */
-    .drawer-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(2px); z-index: 55; opacity: 0; pointer-events: none; transition: opacity .3s; }
-    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
-    .drawer { position: fixed; bottom: 0; left: 0; right: 0; max-height: 85vh; background: #fff; border-radius: 24px 24px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); z-index: 56; overflow-y: auto; transform: translateY(100%); transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1); padding: 0 0 24px 0; }
-    .drawer.open { transform: translateY(0); }
-    .drawer-handle { height: 5px; width: 48px; background: #e5e7eb; border-radius: 3px; margin: 16px auto; flex-shrink: 0; }
-    .drawer-user { padding: 16px 24px; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-    .drawer-title { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #9ca3af; padding: 16px 24px 8px; }
-    .drawer-item { display: flex; align-items: center; gap: 16px; padding: 12px 24px; font-size: .95rem; font-weight: 600; color: #374151; text-decoration: none; border: none; background: none; cursor: pointer; width: 100%; text-align: left; }
-    .drawer-item:active { background: #f3f4f6; }
-    .drawer-item svg { width: 20px; height: 20px; color: #6b7280; }
-    .drawer-item.active-menu { color: #ff5722; background: #fff4f1; }
-    .drawer-item.active-menu svg { color: #ff5722; }
-
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
   </style>
 </head>
 <body>
 
   <div class="toast-container" id="toast-container"></div>
 
-  <div class="sidebar">
+  <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="brand">AdvancedPlus <span>Cloud</span></div>
-      <div class="sub">Inventory Management</div>
+      <div class="sub">Stock Check</div>
     </div>
 
-    <div class="nav-section">เมนูหลัก</div>
-    <a href="dashboard.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Dashboard</a>
-    <a href="index.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>รับเข้าสินค้า</a>
-    <a href="inventory.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>คลังสินค้าหลัก</a>
-    <a href="outbound.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>ขายออก</a>
-    <a href="stock_check.html" class="nav-item active"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>ตรวจสอบสต็อก</a>
+    <nav>
+      <div class="nav-section">หลัก</div>
+      <a href="dashboard.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg> Dashboard</a>
+      <a href="index.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> รับเข้าสินค้า</a>
+      <a href="inventory.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg> คลังสินค้าหลัก</a>
+      <a href="outbound.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg> ขายออก</a>
+      <a href="stock_check.html" class="nav-item active"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg> ตรวจสอบสต็อก</a>
 
-    <div class="nav-section">คลังสินค้าย่อย</div>
-    <a href="service_warehouse.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>คลังบริการ</a>
-    <a href="online_warehouse.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>คลังออนไลน์</a>
-    <a href="reserve_warehouse.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0v-5a1 1 0 011-1h2a1 1 0 011 1v5"/></svg>คลังติดตั้ง</a>
+      <div class="nav-section">คลังย่อย</div>
+      <a href="service_warehouse.html" class="nav-item">คลังบริการ</a>
+      <a href="online_warehouse.html" class="nav-item">คลังออนไลน์</a>
+      <a href="reserve_warehouse.html" class="nav-item">คลังติดตั้ง</a>
 
-    <div class="nav-section">จัดการหลังการขาย</div>
-    <a href="claim_list.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>สินค้าเคลม</a>
-    <a href="sold.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>ประวัติขายออก</a>
-
-    <div class="nav-section">เครื่องมือ & รายงาน</div>
-    <a href="tracker.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>S/N Tracker</a>
-    <a href="invoice_lookup.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>ค้นหา Invoice</a>
-    <a href="export.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Export รายงาน</a>
-    <a href="settings.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>ตั้งค่าระบบ</a>
+      <div class="nav-section">เครื่องมือ</div>
+      <a href="tracker.html" class="nav-item">S/N Tracker</a>
+      <a href="claim_list.html" class="nav-item">รายการเคลม</a>
+      <a href="export.html" class="nav-item">Export ข้อมูล</a>
+      <a href="settings.html" class="nav-item">ตั้งค่าระบบ</a>
+    </nav>
 
     <div class="sidebar-footer">
       <div class="user-chip">
-        <div class="user-avatar" id="desktop-user-initial">U</div>
-        <div style="overflow: hidden;">
-          <div class="user-name" id="desktop-user-name">ผู้ใช้งาน</div>
-          <div class="user-role" id="desktop-user-email">กำลังโหลด...</div>
+        <div class="user-avatar" id="u-initial">9</div>
+        <div class="overflow-hidden">
+          <div class="text-[0.8rem] font-bold truncate" id="u-name">ninexd147</div>
+          <div class="text-[0.65rem] text-gray-400 truncate">Staff Member</div>
         </div>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <div class="page-wrap">
-    <div class="page-header">
-      <div>
-        <div class="page-title">ตรวจสอบสินค้า (Stock Check)</div>
-      </div>
+  <main class="page-wrap">
+    <header class="page-header">
+      <h1 class="page-title">ตรวจสอบสินค้า</h1>
       <div class="header-actions">
-        <div class="last-check">
-          <span>อัปเดตล่าสุด:</span>
-          <span id="last-sync-time" style="font-weight: 600; color: #4b5563;">-</span>
-        </div>
-        <button class="btn-sync" id="btn-sync" onclick="forceSync()" title="ซิงค์ข้อมูลจากระบบ">
-          <svg style="width:20px;height:20px" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
+        <button class="bg-gray-100 p-2 rounded-lg hover:bg-orange-50 text-gray-600 hover:text-orange-600 transition-colors" onclick="forceRefresh()">
+          <svg class="w-5 h-5" id="sync-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
         </button>
       </div>
-    </div>
+    </header>
 
     <div class="page-content">
-      <div class="input-section">
-        <div class="input-section-title">
-          <svg style="width:20px;height:20px;color:#ff5722" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-          สแกนบาร์โค้ด
+      <section class="input-section">
+        <div class="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wider">สแกน S/N สินค้า</div>
+        <div class="flex gap-3">
+          <input type="text" id="sn-input" class="field flex-1" placeholder="ยิงบาร์โค้ดที่นี่..." autocomplete="off">
+          <button onclick="handleScan()" class="bg-orange-500 text-white px-8 rounded-xl font-bold shadow-lg shadow-orange-200 active:scale-95 transition-transform">ตกลง</button>
         </div>
-        <div class="input-group">
-          <div class="input-group-item">
-            <div class="field-label">S/N (Serial Number)</div>
-            <input id="sn-input" type="text" class="field" placeholder="ยิงสแกนเนอร์ หรือ พิมพ์ S/N..." autocomplete="off" />
-          </div>
-          <button class="btn-search" onclick="searchBySN()">ค้นหา (Enter)</button>
-        </div>
-      </div>
+      </section>
 
       <div class="content-wrapper">
         <div class="column-card">
           <div class="column-header">
-            <span>สต็อกในระบบ (จาก 4 คลัง)</span>
-            <span class="column-count" id="all-products-count">0</span>
+            <span>รายการในคลัง</span>
+            <span class="bg-gray-200 px-2 py-0.5 rounded text-xs" id="count-left">0</span>
           </div>
-          <div class="product-list" id="all-products-list">
-            <div class="empty-state">
-              <div class="loading-spinner"></div>
-              <div>กำลังโหลดข้อมูล...</div>
+          <div class="product-list" id="list-left">
+            <div class="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
+              <div class="spinner"></div>
+              <span class="text-xs">กำลังเชื่อมต่อฐานข้อมูล...</span>
             </div>
           </div>
         </div>
 
-        <div class="column-card" style="border: 1px solid #10b981;">
-          <div class="column-header checked-header">
-            <span>รายการที่นับแล้ว</span>
-            <span class="column-count" id="checked-products-count">0</span>
+        <div class="column-card border-2 border-emerald-100">
+          <div class="column-header bg-emerald-50 text-emerald-700">
+            <span>นับแล้ว</span>
+            <span class="bg-emerald-200 px-2 py-0.5 rounded text-xs" id="count-right">0</span>
           </div>
-          <div class="product-list" id="checked-products-list">
-            <div class="empty-state">
-              <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              <div>ยังไม่มีการสแกนสินค้า</div>
-              <div style="font-size: 0.75rem; margin-top: 4px;">สแกน S/N เพื่อย้ายสินค้ามาที่นี่</div>
-            </div>
+          <div class="product-list" id="list-right">
+            <div class="flex flex-col items-center justify-center h-full text-gray-300 italic text-xs">ยังไม่มีรายการที่สแกน</div>
           </div>
         </div>
       </div>
 
-      <div class="button-section">
-        <button class="btn-secondary" onclick="clearAll()">ล้างรายการที่สแกน</button>
-        <button class="btn-primary" id="save-btn" onclick="saveStockCheck()">ยืนยันการนับสต็อก</button>
+      <div class="flex justify-end gap-3">
+        <button onclick="resetScan()" class="px-6 py-3 font-bold text-gray-500 hover:text-red-500 transition-colors">ล้างข้อมูล</button>
+        <button onclick="submitCheck()" class="bg-emerald-500 text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-emerald-100 active:scale-95 transition-transform">บันทึกผลการตรวจสอบ</button>
       </div>
     </div>
-  </div>
+  </main>
 
   <nav class="bottom-nav">
-    <a href="dashboard.html" class="bn-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>หน้าแรก</a>
-    <a href="inventory.html" class="bn-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>คลังหลัก</a>
-    <a href="stock_check.html" class="bn-item active"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>ตรวจนับ</a>
-    <button class="bn-item" onclick="toggleDrawer()"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>เมนู</button>
+    <a href="dashboard.html" class="bn-item active"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>หน้าแรก</a>
+    <a href="stock_check.html" class="bn-item"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>ตรวจนับ</a>
   </nav>
 
-  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
-  <div class="drawer" id="drawer">
-    <div class="drawer-handle"></div>
-    
-    <div class="drawer-user">
-      <div class="user-avatar" id="mobile-user-initial">U</div>
-      <div>
-        <div class="user-name" id="mobile-user-name" style="font-size: 1rem;">ผู้ใช้งาน</div>
-        <div class="user-role" id="mobile-user-email">loading...</div>
-      </div>
-    </div>
-
-    <div class="drawer-title">เมนูหลัก</div>
-    <a href="dashboard.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Dashboard</a>
-    <a href="index.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>รับเข้าสินค้า</a>
-    <a href="inventory.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>คลังสินค้าหลัก</a>
-    <a href="outbound.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>ขายออก</a>
-
-    <div class="drawer-title">คลังสินค้าย่อย</div>
-    <a href="service_warehouse.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>คลังบริการ</a>
-    <a href="online_warehouse.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>คลังออนไลน์</a>
-    <a href="reserve_warehouse.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0v-5a1 1 0 011-1h2a1 1 0 011 1v5"/></svg>คลังติดตั้ง</a>
-
-    <div class="drawer-title">จัดการหลังการขาย</div>
-    <a href="claim_list.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>สินค้าเคลม</a>
-    <a href="sold.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>ประวัติขายออก</a>
-
-    <div class="drawer-title">เครื่องมือ & รายงาน</div>
-    <a href="tracker.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>S/N Tracker</a>
-    <a href="invoice_lookup.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>ค้นหา Invoice</a>
-    <a href="export.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Export รายงาน</a>
-    <a href="settings.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>ตั้งค่าระบบ</a>
-    
-    <div style="height: 1px; background: #e5e7eb; margin: 16px 24px;"></div>
-    <button class="drawer-item" onclick="doLogout()" style="color:#ef4444"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>ออกจากระบบ</button>
-  </div>
-
   <script>
-    // ตั้งค่า Firebase - ห้ามแก้ Key นี้นะครับ ใช้ของเดิมของคุณถูกแล้ว
-    firebase.initializeApp({
+    // --- Config & Init ---
+    const firebaseConfig = {
       apiKey: "AIzaSyDRYv-TvumnUrEqO2vUZ2YtFapACxYHklc",
       authDomain: "advancedplus-stock-b001e.firebaseapp.com",
       projectId: "advancedplus-stock-b001e",
       storageBucket: "advancedplus-stock-b001e.firebasestorage.app",
       messagingSenderId: "638897001944",
       appId: "1:638897001944:web:6d2fa196e78661fb310ead"
-    });
-
+    };
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let allProducts = [];
-    let checkedProducts = [];
-    const CACHE_KEY = 'stock_check_cache';
-    const CACHE_TIME = 5 * 60 * 1000; // 5 นาที
 
-    // 1. ระบบแจ้งเตือน Pop-up (Toast)
-    function showToast(message, type = 'info') {
+    let allItems = [];
+    let checkedItems = [];
+
+    // --- Core Functions ---
+
+    // โหลดข้อมูลแบบกวาดทุกคลัง (Streaming)
+    async function loadStockData() {
+      const paths = [
+        { id: 'inventory', label: 'คลังหลัก' },
+        { id: 'service_warehouse', label: 'คลังบริการ' },
+        { id: 'online_warehouse', label: 'คลังออนไลน์' },
+        { id: 'reserve_warehouse', label: 'คลังติดตั้ง' }
+      ];
+
+      const productMap = {};
+      
+      // ล้าง UI ก่อนโหลด
+      document.getElementById('list-left').innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-400 gap-2"><div class="spinner"></div><span class="text-xs">กำลังโหลดข้อมูล 4 คลัง...</span></div>';
+
+      const fetchTasks = paths.map(async (path) => {
+        try {
+          const snap = await db.ref(path.id).once('value');
+          if (snap.exists()) {
+            const data = snap.val();
+            Object.entries(data).forEach(([key, item]) => {
+              const sn = String(item.sn || item.serial_number || '').trim().toUpperCase();
+              if (!sn) return;
+
+              if (productMap[sn]) {
+                if (!productMap[sn].loc.includes(path.label)) {
+                  productMap[sn].loc += `, ${path.label}`;
+                  productMap[sn].isDup = true;
+                }
+              } else {
+                productMap[sn] = {
+                  sn: sn,
+                  name: item.name || item.product_name || 'ไม่มีชื่อสินค้า',
+                  loc: path.label,
+                  isDup: false
+                };
+              }
+            });
+            // ทยอยอัปเดต UI ทันทีที่มีคลังใดคลังหนึ่งโหลดเสร็จ
+            allItems = Object.values(productMap);
+            renderUI();
+          }
+        } catch (e) {
+          console.warn(`Path ${path.id} ไม่มีข้อมูลหรือเข้าถึงไม่ได้`);
+        }
+      });
+
+      // รอจนเช็คครบทุก Path (แม้จะไม่มีข้อมูล)
+      await Promise.all(fetchTasks);
+      allItems = Object.values(productMap);
+      renderUI();
+      
+      if (allItems.length === 0) {
+        document.getElementById('list-left').innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-400 text-xs italic">ไม่มีข้อมูลสินค้าในทุกคลัง</div>';
+      }
+    }
+
+    function renderUI() {
+      const leftBox = document.getElementById('list-left');
+      const rightBox = document.getElementById('list-right');
+      
+      const pending = allItems.filter(a => !checkedItems.some(c => c.sn === a.sn));
+      
+      document.getElementById('count-left').textContent = pending.length;
+      document.getElementById('count-right').textContent = checkedItems.length;
+
+      // ฝั่งซ้าย
+      if (pending.length > 0) {
+        leftBox.innerHTML = pending.map(item => `
+          <div class="product-item" onclick="moveToRight('${item.sn}')">
+            <div class="overflow-hidden">
+              <div class="text-sm font-bold truncate">${item.name}</div>
+              <div class="text-[10px] font-mono text-gray-400">S/N: ${item.sn}</div>
+            </div>
+            <div class="warehouse-badge ${item.isDup ? 'multiple' : ''}">${item.loc}</div>
+          </div>
+        `).join('');
+      }
+
+      // ฝั่งขวา
+      if (checkedItems.length > 0) {
+        rightBox.innerHTML = [...checkedItems].reverse().map((item, idx) => `
+          <div class="product-item border-emerald-200 bg-emerald-50/30">
+            <div class="overflow-hidden">
+              <div class="text-sm font-bold text-emerald-800 truncate">${item.name}</div>
+              <div class="text-[10px] font-mono text-emerald-600">S/N: ${item.sn}</div>
+            </div>
+            <button onclick="moveToLeft('${item.sn}')" class="text-red-400 hover:text-red-600 p-1">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        `).join('');
+      } else {
+        rightBox.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-300 italic text-xs">ยังไม่มีรายการที่สแกน</div>';
+      }
+    }
+
+    // --- Events ---
+    function handleScan() {
+      const input = document.getElementById('sn-input');
+      const val = input.value.trim().toUpperCase();
+      if (!val) return;
+
+      const found = allItems.find(i => i.sn === val);
+      if (found) {
+        if (!checkedItems.some(c => c.sn === val)) {
+          checkedItems.push(found);
+          showToast(`นับแล้ว: ${found.name}`, 'success');
+        } else {
+          showToast(`S/N นี้สแกนไปแล้ว`, 'info');
+        }
+      } else {
+        showToast(`ไม่พบ S/N: ${val} ในระบบ`, 'error');
+      }
+      
+      input.value = '';
+      input.focus();
+      renderUI();
+    }
+
+    function moveToRight(sn) {
+      const item = allItems.find(i => i.sn === sn);
+      if (item) {
+        checkedItems.push(item);
+        renderUI();
+      }
+    }
+
+    function moveToLeft(sn) {
+      checkedItems = checkedItems.filter(i => i.sn !== sn);
+      renderUI();
+    }
+
+    function forceRefresh() {
+      const icon = document.getElementById('sync-icon');
+      icon.parentElement.classList.add('animate-spin');
+      loadStockData().then(() => {
+        setTimeout(() => icon.parentElement.classList.remove('animate-spin'), 500);
+      });
+    }
+
+    function resetScan() {
+      if (confirm('ยืนยันการล้างรายการทั้งหมดที่สแกน?')) {
+        checkedItems = [];
+        renderUI();
+      }
+    }
+
+    async function submitCheck() {
+      if (checkedItems.length === 0) return alert('กรุณาสแกนสินค้าก่อนบันทึก');
+      
+      const user = firebase.auth().currentUser;
+      const refId = `report_${Date.now()}`;
+      
+      try {
+        await db.ref('stock_reports').child(refId).set({
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+          staff: user ? user.email : 'Unknown',
+          total: checkedItems.length,
+          items: checkedItems
+        });
+        showToast('บันทึกข้อมูลการตรวจสอบสำเร็จ!', 'success');
+        checkedItems = [];
+        renderUI();
+      } catch (e) {
+        showToast('เกิดข้อผิดพลาดในการบันทึก', 'error');
+      }
+    }
+
+    function showToast(msg, type) {
       const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = `toast toast-${type}`;
-      
-      let icon = '';
-      if (type === 'success') icon = '<svg style="width:20px;height:20px" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
-      else if (type === 'error') icon = '<svg style="width:20px;height:20px" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
-      else icon = '<svg style="width:20px;height:20px" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
-
-      toast.innerHTML = `${icon} <span>${message}</span>`;
-      container.appendChild(toast);
-      
-      setTimeout(() => toast.classList.add('show'), 10);
+      const t = document.createElement('div');
+      t.className = `toast show`;
+      if(type === 'error') t.style.borderLeftColor = '#ef4444';
+      if(type === 'success') t.style.borderLeftColor = '#10b981';
+      t.textContent = msg;
+      container.appendChild(t);
       setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
+        t.classList.remove('show');
+        setTimeout(() => t.remove(), 300);
       }, 3000);
     }
 
-    function updateSyncTime() {
-      const now = new Date();
-      document.getElementById('last-sync-time').textContent = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    // 2. ฟังก์ชันโหลดข้อมูลแบบ Streaming (โหลดเร็ว ไม่ต้องรอพร้อมกัน)
-// 2. ฟังก์ชันโหลดข้อมูลแบบ Streaming (ดักจับคลังเปล่า 100%)
-    async function loadProducts(forceUpdate = false) {
-      try {
-        if (!forceUpdate) {
-          const cached = localStorage.getItem(CACHE_KEY);
-          if (cached) {
-            const cacheData = JSON.parse(cached);
-            if (Date.now() - cacheData.timestamp < CACHE_TIME) {
-              allProducts = cacheData.products;
-              renderProducts();
-              updateSyncTime();
-              return;
-            }
-          }
-        }
-
-        // คลังที่ต้องดึงข้อมูล (อ้างอิงตาม Realtime Database Paths ของระบบคุณ)
-        const warehouses = [
-          { ref: 'inventory', name: 'คลังหลัก' },
-          { ref: 'service_warehouse', name: 'คลังบริการ' },
-          { ref: 'online_warehouse', name: 'คลังออนไลน์' },
-          { ref: 'reserve_warehouse', name: 'คลังติดตั้ง' }
-        ];
-
-        allProducts = [];
-        const productMap = {};
-
-        if (forceUpdate) showToast('กำลังตรวจสอบฐานข้อมูล...', 'info');
-        
-        // ล้างหน้าจอระหว่างรอ
-        document.getElementById('all-products-list').innerHTML = '<div class="empty-state"><div class="loading-spinner"></div><div>กำลังโหลดข้อมูล...</div></div>';
-
-        // โหลดข้อมูลแยกทีละคลัง
-        const fetchPromises = warehouses.map(async (w) => {
-          try {
-            const snap = await db.ref(w.ref).once('value');
-            
-            // เพิ่มลอจิก: ถ้าฐานข้อมูลมีอยู่จริง และมีข้อมูลข้างใน
-            if (snap.exists() && snap.val() !== null) {
-              Object.entries(snap.val()).forEach(([key, product]) => {
-                const snVal = product.sn || product.serial_number || 'N/A';
-                const snKey = String(snVal).toUpperCase(); 
-
-                if (productMap[snKey]) {
-                  if (!productMap[snKey].warehouse.includes(w.name)) {
-                    productMap[snKey].warehouse += `, ${w.name}`;
-                    productMap[snKey].isDuplicate = true; 
-                  }
-                } else {
-                  productMap[snKey] = {
-                    id: key,
-                    name: product.name || product.product_name || '-',
-                    sn: String(snVal),
-                    warehouse: w.name,
-                    sku: product.sku || '-',
-                    isDuplicate: false
-                  };
-                }
-              });
-
-              // อัปเดต UI ทันทีเฉพาะคลังที่มีของ
-              allProducts = Object.values(productMap);
-              renderProducts();
-            } else {
-               // คลังว่างเปล่า หรือยังไม่เคยถูกสร้าง (ไม่ต้องทำอะไร ปล่อยผ่าน)
-               console.log(`[สถานะ] ${w.name} ยังไม่มีข้อมูลในระบบ`);
-            }
-          } catch (err) {
-            console.warn(`[ข้าม] เข้าถึง ${w.name} ไม่ได้ หรือฐานข้อมูลยังไม่สร้าง:`, err);
-          }
-        });
-
-        // รอจนกว่าจะ "ตรวจสอบเสร็จทุกคลัง" ไม่ว่าคลังนั้นจะมีหรือไม่มีข้อมูลก็ตาม
-        await Promise.all(fetchPromises);
-
-        // จัดการอัปเดตตัวแปรหลัก
-        allProducts = Object.values(productMap);
-        
-        // เซฟลง Cache เพื่อไม่ให้โหลดซ้ำซ้อน
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
-          products: allProducts,
-          timestamp: Date.now()
-        }));
-
-        // *** จุดแก้ปัญหา: บังคับอัปเดตหน้าจอครั้งสุดท้าย ***
-        // ถ้าทั้ง 4 คลังว่างเปล่าหมด โค้ดตรงนี้จะสั่งปิด Spinner และขึ้นว่า "ตรวจครบทุกรายการแล้ว!"
-        renderProducts(); 
-        
-        updateSyncTime();
-        if (forceUpdate) showToast('ตรวจสอบครบทั้ง 4 คลังแล้ว', 'success');
-
-      } catch (error) {
-        console.error('Error LoadProducts:', error);
-        showToast('ผิดพลาดในการเชื่อมต่อฐานข้อมูล', 'error');
-        document.getElementById('all-products-list').innerHTML = '<div class="empty-state"><div>ไม่พบข้อมูลในระบบ</div></div>';
-        document.getElementById('all-products-count').textContent = '0';
-      }
-    }
-
-    async function forceSync() {
-      const btn = document.getElementById('btn-sync');
-      btn.classList.add('spinning');
-      localStorage.removeItem(CACHE_KEY);
-      await loadProducts(true);
-      btn.classList.remove('spinning');
-    }
-
-    // 3. Render สินค้าฝั่งซ้าย (ยังไม่สแกน)
-    function renderProducts() {
-      const list = document.getElementById('all-products-list');
-      const available = allProducts.filter(p => !checkedProducts.some(c => c.sn.toUpperCase() === p.sn.toUpperCase()));
-      document.getElementById('all-products-count').textContent = available.length;
-
-      if (!available.length) {
-        list.innerHTML = '<div class="empty-state"><svg style="width:48px;height:48px;margin-bottom:12px;opacity:.3;color:#10b981" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><div>ตรวจครบทุกรายการแล้ว!</div></div>';
-        return;
-      }
-
-      list.innerHTML = available.map(p => `
-        <div class="product-item" onclick="addProduct('${p.sn}')">
-          <div style="flex:1; overflow:hidden;">
-            <div class="product-name">${p.name}</div>
-            <div class="product-info">S/N: ${p.sn}</div>
-          </div>
-          <span class="warehouse-badge ${p.isDuplicate ? 'multiple' : ''}">${p.warehouse}</span>
-        </div>
-      `).join('');
-    }
-
-    // 4. Render สินค้าฝั่งขวา (สแกนแล้ว)
-    function renderCheckedProducts() {
-      const list = document.getElementById('checked-products-list');
-      document.getElementById('checked-products-count').textContent = checkedProducts.length;
-
-      if (!checkedProducts.length) {
-        list.innerHTML = `
-          <div class="empty-state">
-            <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-            <div>ยังไม่มีการสแกนสินค้า</div>
-          </div>`;
-        return;
-      }
-
-      const reversedList = [...checkedProducts].reverse(); // เอาของใหม่ไว้บนสุด
-      list.innerHTML = reversedList.map((p, index) => {
-        const originalIndex = checkedProducts.length - 1 - index;
-        return `
-          <div class="selected-item" style="${index === 0 ? 'border-color: #10b981; background: #ecfdf5;' : ''}">
-            <div class="selected-item-header">
-              <div class="selected-item-name">${p.name}</div>
-              <button class="btn-remove" onclick="removeProduct(${originalIndex})">ลบ</button>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div class="selected-item-sn">${p.sn}</div>
-              <div style="font-size: 0.7rem; color: #15803d; font-weight: 600;">${p.warehouse}</div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    // 5. ลอจิกการทำงาน
-    function addProduct(sn) {
-      if (checkedProducts.some(p => p.sn.toUpperCase() === String(sn).toUpperCase())) {
-        showToast(`สแกนไปแล้ว! (${sn})`, 'error');
-        return;
-      }
-      const product = allProducts.find(p => p.sn.toUpperCase() === String(sn).toUpperCase());
-      if (!product) {
-        showToast('ไม่พบ S/N นี้ในระบบคลัง', 'error');
-        return;
-      }
-      
-      if(product.isDuplicate) {
-        showToast(`ข้อควรระวัง: พบสินค้านี้ในหลายคลัง (${product.warehouse})`, 'info');
-      }
-
-      checkedProducts.push(product);
-      renderProducts();
-      renderCheckedProducts();
-    }
-
-    function searchBySN() {
-      const inputEl = document.getElementById('sn-input');
-      const sn = inputEl.value.trim();
-      if (!sn) return;
-      
-      addProduct(sn);
-      inputEl.value = '';
-      inputEl.focus();
-    }
-
-    function removeProduct(idx) {
-      checkedProducts.splice(idx, 1);
-      renderProducts();
-      renderCheckedProducts();
-    }
-
-    function clearAll() {
-      if (!checkedProducts.length) return;
-      if (!confirm('ยืนยันล้างรายการที่สแกนแล้วทั้งหมด?')) return;
-      checkedProducts = [];
-      renderProducts();
-      renderCheckedProducts();
-    }
-
-    async function saveStockCheck() {
-      if (!checkedProducts.length) {
-        showToast('กรุณาสแกนสินค้าอย่างน้อย 1 รายการ', 'error');
-        return;
-      }
-
-      const btn = document.getElementById('save-btn');
-      btn.disabled = true;
-      btn.textContent = 'กำลังบันทึกข้อมูล...';
-
-      try {
-        const user = firebase.auth().currentUser;
-        if (!user) {
-          showToast('Session หมดอายุ กรุณาเข้าสู่ระบบใหม่', 'error');
-          window.location.href = 'login.html';
-          return;
-        }
-
-        const checkId = 'check_' + Date.now();
-        const now = new Date();
-
-        await db.ref('stock_checks/' + checkId).set({
-          checkId: checkId,
-          status: 'completed',
-          timestamp: firebase.database.ServerValue.TIMESTAMP,
-          dateTime: now.toLocaleString('th-TH'),
-          userId: user.uid,
-          userEmail: user.email,
-          totalItems: checkedProducts.length,
-          items: checkedProducts.map(p => ({
-            sn: p.sn,
-            name: p.name,
-            warehouse: p.warehouse,
-            sku: p.sku
-          }))
-        });
-
-        showToast(`บันทึกการตรวจสอบ ${checkedProducts.length} รายการสำเร็จ!`, 'success');
-
-        checkedProducts = [];
-        renderProducts();
-        renderCheckedProducts();
-
-      } catch (error) {
-        console.error('Error:', error);
-        showToast('เกิดข้อผิดพลาดในการบันทึก', 'error');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'ยืนยันการนับสต็อก';
-      }
-    }
-
-    // 6. UI & Auth Events
-    function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); document.getElementById('drawer-overlay').classList.toggle('open'); }
-    function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawer-overlay').classList.remove('open'); }
-    function doLogout() { firebase.auth().signOut().then(() => window.location.href = 'login.html'); }
-
-    // ดักปุ่ม Enter เวลายิงสแกนเนอร์
-    document.getElementById('sn-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        searchBySN();
-      }
+    // --- Init ---
+    document.getElementById('sn-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleScan();
     });
 
-    // ตรวจสอบการ Login และดึงข้อมูล
     firebase.auth().onAuthStateChanged(user => {
       if (!user) {
         window.location.href = 'login.html';
       } else {
-        const email = user.email || 'user@advancedplus.cloud';
-        const name = email.split('@')[0];
-        const initial = name[0].toUpperCase();
-
-        document.getElementById('desktop-user-name').textContent = name;
-        document.getElementById('desktop-user-email').textContent = email;
-        document.getElementById('desktop-user-initial').textContent = initial;
-
-        document.getElementById('mobile-user-name').textContent = name;
-        document.getElementById('mobile-user-email').textContent = email;
-        document.getElementById('mobile-user-initial').textContent = initial;
-        
-        loadProducts();
+        document.getElementById('u-name').textContent = user.email.split('@')[0];
+        document.getElementById('u-initial').textContent = user.email[0].toUpperCase();
+        loadStockData();
       }
     });
   </script>
