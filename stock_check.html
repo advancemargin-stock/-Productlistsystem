@@ -339,6 +339,7 @@
     }
 
     // 2. ฟังก์ชันโหลดข้อมูลแบบ Streaming (โหลดเร็ว ไม่ต้องรอพร้อมกัน)
+// 2. ฟังก์ชันโหลดข้อมูลแบบ Streaming (ดักจับคลังเปล่า 100%)
     async function loadProducts(forceUpdate = false) {
       try {
         if (!forceUpdate) {
@@ -354,7 +355,7 @@
           }
         }
 
-        // คลังที่ต้องดึงข้อมูล
+        // คลังที่ต้องดึงข้อมูล (อ้างอิงตาม Realtime Database Paths ของระบบคุณ)
         const warehouses = [
           { ref: 'inventory', name: 'คลังหลัก' },
           { ref: 'service_warehouse', name: 'คลังบริการ' },
@@ -365,25 +366,26 @@
         allProducts = [];
         const productMap = {};
 
-        if (forceUpdate) showToast('กำลังซิงค์ข้อมูลสต็อก...', 'info');
+        if (forceUpdate) showToast('กำลังตรวจสอบฐานข้อมูล...', 'info');
         
         // ล้างหน้าจอระหว่างรอ
         document.getElementById('all-products-list').innerHTML = '<div class="empty-state"><div class="loading-spinner"></div><div>กำลังโหลดข้อมูล...</div></div>';
 
-        // โหลดข้อมูลแยกทีละคลัง คลังไหนเสร็จแสดงผลเลย
+        // โหลดข้อมูลแยกทีละคลัง
         const fetchPromises = warehouses.map(async (w) => {
           try {
             const snap = await db.ref(w.ref).once('value');
-            if (snap.exists()) {
+            
+            // เพิ่มลอจิก: ถ้าฐานข้อมูลมีอยู่จริง และมีข้อมูลข้างใน
+            if (snap.exists() && snap.val() !== null) {
               Object.entries(snap.val()).forEach(([key, product]) => {
-                // ดักบั๊กกรณี S/N เป็นตัวเลข
                 const snVal = product.sn || product.serial_number || 'N/A';
                 const snKey = String(snVal).toUpperCase(); 
 
                 if (productMap[snKey]) {
                   if (!productMap[snKey].warehouse.includes(w.name)) {
                     productMap[snKey].warehouse += `, ${w.name}`;
-                    productMap[snKey].isDuplicate = true; // S/N ไปโผล่หลายคลัง
+                    productMap[snKey].isDuplicate = true; 
                   }
                 } else {
                   productMap[snKey] = {
@@ -397,28 +399,39 @@
                 }
               });
 
-              // อัปเดต UI ทันที
+              // อัปเดต UI ทันทีเฉพาะคลังที่มีของ
               allProducts = Object.values(productMap);
               renderProducts();
+            } else {
+               // คลังว่างเปล่า หรือยังไม่เคยถูกสร้าง (ไม่ต้องทำอะไร ปล่อยผ่าน)
+               console.log(`[สถานะ] ${w.name} ยังไม่มีข้อมูลในระบบ`);
             }
           } catch (err) {
-            console.error(`โหลด ${w.name} ไม่สำเร็จ:`, err);
+            console.warn(`[ข้าม] เข้าถึง ${w.name} ไม่ได้ หรือฐานข้อมูลยังไม่สร้าง:`, err);
           }
         });
 
-        // รอจนครบทุกคลังเพื่อเซฟลง Cache
+        // รอจนกว่าจะ "ตรวจสอบเสร็จทุกคลัง" ไม่ว่าคลังนั้นจะมีหรือไม่มีข้อมูลก็ตาม
         await Promise.all(fetchPromises);
 
+        // จัดการอัปเดตตัวแปรหลัก
+        allProducts = Object.values(productMap);
+        
+        // เซฟลง Cache เพื่อไม่ให้โหลดซ้ำซ้อน
         localStorage.setItem(CACHE_KEY, JSON.stringify({
           products: allProducts,
           timestamp: Date.now()
         }));
 
+        // *** จุดแก้ปัญหา: บังคับอัปเดตหน้าจอครั้งสุดท้าย ***
+        // ถ้าทั้ง 4 คลังว่างเปล่าหมด โค้ดตรงนี้จะสั่งปิด Spinner และขึ้นว่า "ตรวจครบทุกรายการแล้ว!"
+        renderProducts(); 
+        
         updateSyncTime();
-        if (forceUpdate) showToast('ซิงค์ข้อมูลครบทุกคลังแล้ว', 'success');
+        if (forceUpdate) showToast('ตรวจสอบครบทั้ง 4 คลังแล้ว', 'success');
 
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error LoadProducts:', error);
         showToast('ผิดพลาดในการเชื่อมต่อฐานข้อมูล', 'error');
         document.getElementById('all-products-list').innerHTML = '<div class="empty-state"><div>ไม่พบข้อมูลในระบบ</div></div>';
         document.getElementById('all-products-count').textContent = '0';
