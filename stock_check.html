@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ตรวจสอบสินค้า – AdvancedPlus Cloud</title>
-  
+  <title>ตรวจสอบสต็อก – AdvancedPlus Cloud</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   
@@ -14,62 +13,133 @@
 
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-    body { background: #f5f5f7; font-family: 'IBM Plex Sans Thai', sans-serif; color: #1a1a2e; margin: 0; overscroll-behavior-y: none; }
+    body { background: #f5f5f7; font-family: 'IBM Plex Sans Thai', sans-serif; color: #1a1a2e; margin: 0; }
 
-    /* ── SIDEBAR (เหมือนหน้า Index เป๊ะ) ── */
-    .sidebar { width: 240px; flex-shrink: 0; background: #ffffff; border-right: 1px solid #ececec; display: flex; flex-direction: column; padding: 28px 0; position: fixed; top: 0; left: 0; bottom: 0; z-index: 40; overflow-y: auto; }
-    .sidebar-logo { padding: 0 20px 24px; border-bottom: 1px solid #f0f0f0; margin-bottom: 12px; }
+    /* ── SIDEBAR (เหมือนหน้า Index 100%) ── */
+    .sidebar {
+      width: 220px; flex-shrink: 0;
+      background: #ffffff;
+      border-right: 1px solid #ececec;
+      display: flex; flex-direction: column;
+      padding: 28px 0;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 40;
+    }
+    .sidebar-logo {
+      padding: 0 20px 28px;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 16px;
+    }
     .sidebar-logo .brand { font-size: .95rem; font-weight: 800; letter-spacing: .04em; color: #1a1a2e; }
     .sidebar-logo .brand span { color: #ff5722; }
     .sidebar-logo .sub { font-size: .65rem; color: #aaa; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin-top: 4px; }
-    
-    .nav-section { font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #d1d5db; padding: 16px 24px 8px; margin-top: 4px; }
-    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; font-size: .85rem; font-weight: 600; color: #6b7280; text-decoration: none; transition: all .2s; position: relative; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 24px; font-size: .85rem; font-weight: 600;
+      color: #9ca3af; text-decoration: none; border-radius: 0;
+      transition: color .15s, background .15s;
+      position: relative;
+    }
     .nav-item.active { color: #ff5722; background: #fff4f1; }
-    .nav-item.active::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 4px; background: #ff5722; border-radius: 0 4px 4px 0; }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+      width: 4px; background: #ff5722; border-radius: 0 4px 4px 0;
+    }
     .nav-item:hover:not(.active) { color: #374151; background: #fafafa; }
     .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
 
+    .nav-section {
+      font-size: .65rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: #d1d5db; padding: 16px 24px 8px;
+    }
+
     .sidebar-footer { margin-top: auto; padding: 16px 20px 0; border-top: 1px solid #f0f0f0; }
     .user-chip { display: flex; align-items: center; gap: 12px; }
-    .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,#ff5722,#ff7043); display: flex; align-items: center; justify-content: center; color: #fff; font-size: .85rem; font-weight: 700; }
+    .user-avatar { 
+      width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #ff5722, #ff7043);
+      display: flex; align-items: center; justify-content: center; color: #fff; font-size: .85rem; font-weight: 700;
+    }
 
     /* ── MAIN CONTENT ── */
-    .page-wrap { margin-left: 240px; min-height: 100vh; padding-bottom: 80px; }
-    .page-header { background: #fff; border-bottom: 1px solid #ececec; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 30; }
+    .page-wrap { margin-left: 220px; min-height: 100vh; padding-bottom: 80px; }
+    .page-header {
+      background: #fff; border-bottom: 1px solid #ececec;
+      padding: 20px 32px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 30;
+    }
     .page-title { font-size: 1.4rem; font-weight: 800; color: #1a1a2e; }
 
     /* ── UI COMPONENTS ── */
     .page-content { padding: 32px; max-width: 1200px; margin: 0 auto; }
-    .input-section { background: #fff; border: 1px solid #ececec; border-radius: 16px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,.02); margin-bottom: 24px; }
-    .field { width: 100%; background: #fafafa; border: 1.5px solid #e8e8e8; border-radius: 10px; padding: 14px 16px; outline: none; transition: all .2s; }
+    .input-section {
+      background: #fff; border: 1px solid #ececec; border-radius: 16px;
+      padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,.02); margin-bottom: 24px;
+    }
+    .field {
+      width: 100%; background: #fafafa; border: 1.5px solid #e8e8e8; border-radius: 10px;
+      padding: 14px 16px; outline: none; transition: all .2s;
+    }
     .field:focus { border-color: #ff5722; background: #fff; box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1); }
     
     .content-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-    .column-card { background: #fff; border: 1px solid #ececec; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; height: 500px; }
-    .column-header { background: #fafafa; border-bottom: 1px solid #ececec; padding: 16px 20px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+    .column-card {
+      background: #fff; border: 1px solid #ececec; border-radius: 16px;
+      display: flex; flex-direction: column; overflow: hidden; height: 500px;
+    }
+    .column-header {
+      background: #fafafa; border-bottom: 1px solid #ececec;
+      padding: 16px 20px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;
+    }
     .product-list { flex: 1; overflow-y: auto; padding: 16px; }
     
-    .product-item { background: #fff; border: 1.5px solid #f3f4f6; border-radius: 12px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all .2s; display: flex; justify-content: space-between; align-items: center; }
+    .product-item {
+      background: #fff; border: 1.5px solid #f3f4f6; border-radius: 12px;
+      padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all .2s;
+      display: flex; justify-content: space-between; align-items: center;
+    }
     .product-item:hover { border-color: #ff5722; transform: translateX(4px); }
     
-    .warehouse-badge { font-size: .65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: #f1f5f9; color: #475569; }
+    .warehouse-badge {
+      font-size: .65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+      background: #f1f5f9; color: #475569;
+    }
     .warehouse-badge.multiple { background: #fef08a; color: #854d0e; }
 
     /* ── TOAST ── */
-    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
-    .toast { padding: 14px 20px; border-radius: 12px; background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 10px; border-left: 4px solid #ff5722; }
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast {
+      padding: 14px 20px; border-radius: 12px; background: #fff;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1); transform: translateX(120%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 10px;
+      border-left: 4px solid #ff5722; pointer-events: auto;
+    }
     .toast.show { transform: translateX(0); }
 
     @keyframes spin { 100% { transform: rotate(360deg); } }
     .spinner { width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid #ff5722; border-radius: 50%; animation: spin 1s linear infinite; }
+
+    /* ── DRAWER (MOBILE) ── */
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; opacity: 0; pointer-events: none; transition: .3s; }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer {
+      position: fixed; top: 0; bottom: 0; left: -280px; width: 280px;
+      background: #fff; z-index: 56; transition: .3s; display: flex; flex-direction: column;
+    }
+    .drawer.open { left: 0; }
 
     /* ── MOBILE ── */
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .page-wrap { margin-left: 0; }
       .content-wrapper { grid-template-columns: 1fr; }
-      .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 10px 10px 25px; z-index: 50; }
+      .bottom-nav {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: #fff; border-top: 1px solid #eee;
+        display: flex; justify-content: space-around; padding: 10px 10px 25px; z-index: 50;
+      }
+      .bn-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: .65rem; font-weight: 600; color: #9ca3af; }
+      .bn-item.active { color: #ff5722; }
     }
   </style>
 </head>
@@ -80,35 +150,51 @@
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="brand">AdvancedPlus <span>Cloud</span></div>
-      <div class="sub">Stock Check</div>
+      <div class="sub">Inventory Control</div>
     </div>
 
-    <nav>
-      <div class="nav-section">หลัก</div>
-      <a href="dashboard.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg> Dashboard</a>
-      <a href="index.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> รับเข้าสินค้า</a>
-      <a href="inventory.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg> คลังสินค้าหลัก</a>
-      <a href="outbound.html" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg> ขายออก</a>
-      <a href="stock_check.html" class="nav-item active"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg> ตรวจสอบสต็อก</a>
+    <nav class="flex-1 overflow-y-auto">
+      <div class="nav-section">เมนูหลัก</div>
+      <a href="dashboard.html" class="nav-item">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        Dashboard
+      </a>
+      <a href="index.html" class="nav-item">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+        รับเข้าสินค้า
+      </a>
+      <a href="inventory.html" class="nav-item">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>
+        คลังสินค้าหลัก
+      </a>
+      <a href="outbound.html" class="nav-item">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        ขายออก
+      </a>
+      <a href="stock_check.html" class="nav-item active">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+        ตรวจสอบสต็อก
+      </a>
 
-      <div class="nav-section">คลังย่อย</div>
+      <div class="nav-section">คลังสินค้าย่อย</div>
       <a href="service_warehouse.html" class="nav-item">คลังบริการ</a>
       <a href="online_warehouse.html" class="nav-item">คลังออนไลน์</a>
       <a href="reserve_warehouse.html" class="nav-item">คลังติดตั้ง</a>
 
-      <div class="nav-section">เครื่องมือ</div>
+      <div class="nav-section">เครื่องมือ & รายงาน</div>
       <a href="tracker.html" class="nav-item">S/N Tracker</a>
       <a href="claim_list.html" class="nav-item">รายการเคลม</a>
+      <a href="sold.html" class="nav-item">ประวัติขายออก</a>
       <a href="export.html" class="nav-item">Export ข้อมูล</a>
       <a href="settings.html" class="nav-item">ตั้งค่าระบบ</a>
     </nav>
 
     <div class="sidebar-footer">
       <div class="user-chip">
-        <div class="user-avatar" id="u-initial">9</div>
+        <div class="user-avatar" id="u-initial">U</div>
         <div class="overflow-hidden">
-          <div class="text-[0.8rem] font-bold truncate" id="u-name">ninexd147</div>
-          <div class="text-[0.65rem] text-gray-400 truncate">Staff Member</div>
+          <div class="text-[0.8rem] font-bold truncate" id="u-name">กำลังโหลด...</div>
+          <div class="text-[0.65rem] text-gray-400">พนักงานสต็อก</div>
         </div>
       </div>
     </div>
@@ -116,62 +202,87 @@
 
   <main class="page-wrap">
     <header class="page-header">
-      <h1 class="page-title">ตรวจสอบสินค้า</h1>
-      <div class="header-actions">
-        <button class="bg-gray-100 p-2 rounded-lg hover:bg-orange-50 text-gray-600 hover:text-orange-600 transition-colors" onclick="forceRefresh()">
-          <svg class="w-5 h-5" id="sync-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+      <div class="flex items-center gap-3">
+        <button class="md:hidden" onclick="toggleDrawer()">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
+        <h1 class="page-title">ตรวจสอบสินค้า</h1>
       </div>
+      <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors" onclick="forceSync()" title="รีเฟรชฐานข้อมูล">
+        <svg class="w-5 h-5 text-gray-500" id="sync-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+      </button>
     </header>
 
     <div class="page-content">
       <section class="input-section">
-        <div class="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wider">สแกน S/N สินค้า</div>
+        <div class="text-[0.7rem] font-bold text-gray-400 mb-3 uppercase tracking-widest">แสกน Serial Number</div>
         <div class="flex gap-3">
-          <input type="text" id="sn-input" class="field flex-1" placeholder="ยิงบาร์โค้ดที่นี่..." autocomplete="off">
-          <button onclick="handleScan()" class="bg-orange-500 text-white px-8 rounded-xl font-bold shadow-lg shadow-orange-200 active:scale-95 transition-transform">ตกลง</button>
+          <input type="text" id="sn-input" class="field flex-1" placeholder="ยิงบาร์โค้ด หรือพิมพ์ S/N แล้วกด Enter..." autocomplete="off">
+          <button onclick="handleManualScan()" class="bg-orange-500 text-white px-8 rounded-xl font-bold shadow-lg shadow-orange-200 active:scale-95 transition-transform">ตกลง</button>
         </div>
       </section>
 
       <div class="content-wrapper">
         <div class="column-card">
           <div class="column-header">
-            <span>รายการในคลัง</span>
-            <span class="bg-gray-200 px-2 py-0.5 rounded text-xs" id="count-left">0</span>
+            <span>สต็อกทั้งหมดในระบบ</span>
+            <span class="bg-gray-200 px-2 py-0.5 rounded text-[0.65rem]" id="count-pending">0</span>
           </div>
-          <div class="product-list" id="list-left">
+          <div class="product-list" id="list-pending">
             <div class="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
               <div class="spinner"></div>
-              <span class="text-xs">กำลังเชื่อมต่อฐานข้อมูล...</span>
+              <span class="text-xs">กำลังโหลดข้อมูล 4 คลัง...</span>
             </div>
           </div>
         </div>
 
-        <div class="column-card border-2 border-emerald-100">
-          <div class="column-header bg-emerald-50 text-emerald-700">
-            <span>นับแล้ว</span>
-            <span class="bg-emerald-200 px-2 py-0.5 rounded text-xs" id="count-right">0</span>
+        <div class="column-card border-2 border-orange-50">
+          <div class="column-header bg-orange-50/50 text-orange-700">
+            <span>รายการที่นับแล้ว</span>
+            <span class="bg-orange-200 px-2 py-0.5 rounded text-[0.65rem]" id="count-checked">0</span>
           </div>
-          <div class="product-list" id="list-right">
+          <div class="product-list" id="list-checked">
             <div class="flex flex-col items-center justify-center h-full text-gray-300 italic text-xs">ยังไม่มีรายการที่สแกน</div>
           </div>
         </div>
       </div>
 
       <div class="flex justify-end gap-3">
-        <button onclick="resetScan()" class="px-6 py-3 font-bold text-gray-500 hover:text-red-500 transition-colors">ล้างข้อมูล</button>
-        <button onclick="submitCheck()" class="bg-emerald-500 text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-emerald-100 active:scale-95 transition-transform">บันทึกผลการตรวจสอบ</button>
+        <button onclick="clearChecked()" class="px-6 py-3 font-bold text-gray-400 hover:text-red-500 transition-colors">ล้างข้อมูล</button>
+        <button onclick="submitCheck()" class="bg-orange-500 text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-orange-100 active:scale-95 transition-transform">ยืนยันผลการตรวจ</button>
       </div>
     </div>
   </main>
 
   <nav class="bottom-nav">
-    <a href="dashboard.html" class="bn-item active"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>หน้าแรก</a>
-    <a href="stock_check.html" class="bn-item"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>ตรวจนับ</a>
+    <a href="dashboard.html" class="bn-item"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>หน้าแรก</a>
+    <a href="stock_check.html" class="bn-item active"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>ตรวจสต็อก</a>
+    <button onclick="toggleDrawer()" class="bn-item"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>เมนู</button>
   </nav>
 
+  <div class="drawer-overlay" id="drawer-overlay" onclick="toggleDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="p-6 border-bottom bg-orange-500 text-white">
+      <div class="font-bold">AdvancedPlus Cloud</div>
+      <div class="text-xs opacity-80">Inventory System</div>
+    </div>
+    <nav class="flex-1 overflow-y-auto p-4">
+      <a href="dashboard.html" class="block p-3 font-bold text-gray-600">Dashboard</a>
+      <a href="index.html" class="block p-3 font-bold text-gray-600">รับเข้าสินค้า</a>
+      <a href="inventory.html" class="block p-3 font-bold text-gray-600">คลังสินค้าหลัก</a>
+      <a href="outbound.html" class="block p-3 font-bold text-gray-600">ขายออก</a>
+      <hr class="my-3">
+      <a href="service_warehouse.html" class="block p-3 text-sm text-gray-500">คลังบริการ</a>
+      <a href="online_warehouse.html" class="block p-3 text-sm text-gray-500">คลังออนไลน์</a>
+      <a href="reserve_warehouse.html" class="block p-3 text-sm text-gray-500">คลังติดตั้ง</a>
+    </nav>
+    <div class="p-4 border-t">
+      <button onclick="doLogout()" class="w-full bg-red-50 text-red-600 py-3 rounded-lg font-bold">ออกจากระบบ</button>
+    </div>
+  </div>
+
   <script>
-    // --- Config & Init ---
+    // --- ⚙️ Firebase Config ---
     const firebaseConfig = {
       apiKey: "AIzaSyDRYv-TvumnUrEqO2vUZ2YtFapACxYHklc",
       authDomain: "advancedplus-stock-b001e.firebaseapp.com",
@@ -183,205 +294,228 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let allItems = [];
-    let checkedItems = [];
+    let allProducts = [];
+    let checkedProducts = [];
 
-    // --- Core Functions ---
-
-    // โหลดข้อมูลแบบกวาดทุกคลัง (Streaming)
-    async function loadStockData() {
-      const paths = [
-        { id: 'inventory', label: 'คลังหลัก' },
-        { id: 'service_warehouse', label: 'คลังบริการ' },
-        { id: 'online_warehouse', label: 'คลังออนไลน์' },
-        { id: 'reserve_warehouse', label: 'คลังติดตั้ง' }
+    // --- 📡 Data Loading ---
+    async function loadAllData() {
+      const warehouses = [
+        { id: 'inventory', name: 'คลังหลัก' },
+        { id: 'service_warehouse', name: 'คลังบริการ' },
+        { id: 'online_warehouse', name: 'คลังออนไลน์' },
+        { id: 'reserve_warehouse', name: 'คลังติดตั้ง' }
       ];
 
       const productMap = {};
       
-      // ล้าง UI ก่อนโหลด
-      document.getElementById('list-left').innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-400 gap-2"><div class="spinner"></div><span class="text-xs">กำลังโหลดข้อมูล 4 คลัง...</span></div>';
+      // ล้าง UI เริ่มต้น
+      document.getElementById('list-pending').innerHTML = `
+        <div class="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
+          <div class="spinner"></div><span class="text-xs">กำลังเชื่อมต่อคลังสินค้า...</span>
+        </div>`;
 
-      const fetchTasks = paths.map(async (path) => {
+      // ยิงดึงข้อมูลพร้อมกัน 4 คลัง
+      const fetchTasks = warehouses.map(async (w) => {
         try {
-          const snap = await db.ref(path.id).once('value');
-          if (snap.exists()) {
-            const data = snap.val();
-            Object.entries(data).forEach(([key, item]) => {
+          const snap = await db.ref(w.id).once('value');
+          if (snap.exists() && snap.val() !== null) {
+            Object.entries(snap.val()).forEach(([key, item]) => {
               const sn = String(item.sn || item.serial_number || '').trim().toUpperCase();
               if (!sn) return;
 
               if (productMap[sn]) {
-                if (!productMap[sn].loc.includes(path.label)) {
-                  productMap[sn].loc += `, ${path.label}`;
+                if (!productMap[sn].loc.includes(w.name)) {
+                  productMap[sn].loc += `, ${w.name}`;
                   productMap[sn].isDup = true;
                 }
               } else {
                 productMap[sn] = {
                   sn: sn,
-                  name: item.name || item.product_name || 'ไม่มีชื่อสินค้า',
-                  loc: path.label,
+                  name: item.name || item.product_name || 'ไม่ระบุชื่อ',
+                  loc: w.name,
                   isDup: false
                 };
               }
             });
-            // ทยอยอัปเดต UI ทันทีที่มีคลังใดคลังหนึ่งโหลดเสร็จ
-            allItems = Object.values(productMap);
-            renderUI();
           }
+          // ทยอยเรนเดอร์ทันทีที่แต่ละคลังเสร็จ
+          allProducts = Object.values(productMap);
+          renderUI();
         } catch (e) {
-          console.warn(`Path ${path.id} ไม่มีข้อมูลหรือเข้าถึงไม่ได้`);
+          console.warn(`[SKIP] คลัง ${w.name} ยังไม่เคยมีข้อมูล`);
         }
       });
 
-      // รอจนเช็คครบทุก Path (แม้จะไม่มีข้อมูล)
       await Promise.all(fetchTasks);
-      allItems = Object.values(productMap);
+      allProducts = Object.values(productMap);
       renderUI();
-      
-      if (allItems.length === 0) {
-        document.getElementById('list-left').innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-400 text-xs italic">ไม่มีข้อมูลสินค้าในทุกคลัง</div>';
+
+      if (allProducts.length === 0) {
+        document.getElementById('list-pending').innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-300 italic text-xs">ไม่พบข้อมูลสินค้าในระบบ</div>';
       }
     }
 
+    // --- 🖥️ UI Rendering ---
     function renderUI() {
-      const leftBox = document.getElementById('list-left');
-      const rightBox = document.getElementById('list-right');
+      const left = document.getElementById('list-pending');
+      const right = document.getElementById('list-checked');
       
-      const pending = allItems.filter(a => !checkedItems.some(c => c.sn === a.sn));
+      // กรองสินค้าที่ยังไม่ได้สแกน
+      const pending = allProducts.filter(p => !checkedProducts.some(c => c.sn === p.sn));
       
-      document.getElementById('count-left').textContent = pending.length;
-      document.getElementById('count-right').textContent = checkedItems.length;
+      document.getElementById('count-pending').textContent = pending.length;
+      document.getElementById('count-checked').textContent = checkedProducts.length;
 
-      // ฝั่งซ้าย
+      // เรนเดอร์ฝั่งซ้าย (สินค้าที่รอนับ)
       if (pending.length > 0) {
-        leftBox.innerHTML = pending.map(item => `
-          <div class="product-item" onclick="moveToRight('${item.sn}')">
+        left.innerHTML = pending.map(p => `
+          <div class="product-item" onclick="moveToRight('${p.sn}')">
             <div class="overflow-hidden">
-              <div class="text-sm font-bold truncate">${item.name}</div>
-              <div class="text-[10px] font-mono text-gray-400">S/N: ${item.sn}</div>
+              <div class="text-[0.85rem] font-bold truncate">${p.name}</div>
+              <div class="text-[0.65rem] font-mono text-gray-400">S/N: ${p.sn}</div>
             </div>
-            <div class="warehouse-badge ${item.isDup ? 'multiple' : ''}">${item.loc}</div>
+            <div class="warehouse-badge ${p.isDup ? 'multiple' : ''}">${p.loc}</div>
           </div>
         `).join('');
       }
 
-      // ฝั่งขวา
-      if (checkedItems.length > 0) {
-        rightBox.innerHTML = [...checkedItems].reverse().map((item, idx) => `
-          <div class="product-item border-emerald-200 bg-emerald-50/30">
+      // เรนเดอร์ฝั่งขวา (สินค้าที่นับแล้ว)
+      if (checkedProducts.length > 0) {
+        right.innerHTML = [...checkedProducts].reverse().map(p => `
+          <div class="product-item bg-orange-50/30 border-orange-100">
             <div class="overflow-hidden">
-              <div class="text-sm font-bold text-emerald-800 truncate">${item.name}</div>
-              <div class="text-[10px] font-mono text-emerald-600">S/N: ${item.sn}</div>
+              <div class="text-[0.85rem] font-bold text-orange-800 truncate">${p.name}</div>
+              <div class="text-[0.65rem] font-mono text-orange-500">S/N: ${p.sn}</div>
             </div>
-            <button onclick="moveToLeft('${item.sn}')" class="text-red-400 hover:text-red-600 p-1">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12"/></svg>
+            <button onclick="moveToLeft('${p.sn}')" class="text-red-300 hover:text-red-500">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
           </div>
         `).join('');
       } else {
-        rightBox.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-300 italic text-xs">ยังไม่มีรายการที่สแกน</div>';
+        right.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-300 italic text-xs">ยังไม่มีรายการที่สแกน</div>';
       }
     }
 
-    // --- Events ---
-    function handleScan() {
+    // --- 🎮 Logic ---
+    function handleManualScan() {
       const input = document.getElementById('sn-input');
-      const val = input.value.trim().toUpperCase();
-      if (!val) return;
+      const sn = input.value.trim().toUpperCase();
+      if (!sn) return;
 
-      const found = allItems.find(i => i.sn === val);
+      const found = allProducts.find(p => p.sn === sn);
       if (found) {
-        if (!checkedItems.some(c => c.sn === val)) {
-          checkedItems.push(found);
+        if (!checkedProducts.some(c => c.sn === sn)) {
+          checkedProducts.push(found);
           showToast(`นับแล้ว: ${found.name}`, 'success');
         } else {
-          showToast(`S/N นี้สแกนไปแล้ว`, 'info');
+          showToast('S/N นี้สแกนไปแล้ว', 'info');
         }
       } else {
-        showToast(`ไม่พบ S/N: ${val} ในระบบ`, 'error');
+        showToast('ไม่พบรหัสนี้ในระบบคลัง', 'error');
       }
-      
+
       input.value = '';
       input.focus();
       renderUI();
     }
 
     function moveToRight(sn) {
-      const item = allItems.find(i => i.sn === sn);
-      if (item) {
-        checkedItems.push(item);
+      const item = allProducts.find(p => p.sn === sn);
+      if (item && !checkedProducts.some(c => c.sn === sn)) {
+        checkedProducts.push(item);
         renderUI();
       }
     }
 
     function moveToLeft(sn) {
-      checkedItems = checkedItems.filter(i => i.sn !== sn);
+      checkedProducts = checkedProducts.filter(p => p.sn !== sn);
       renderUI();
     }
 
-    function forceRefresh() {
-      const icon = document.getElementById('sync-icon');
-      icon.parentElement.classList.add('animate-spin');
-      loadStockData().then(() => {
-        setTimeout(() => icon.parentElement.classList.remove('animate-spin'), 500);
-      });
-    }
-
-    function resetScan() {
-      if (confirm('ยืนยันการล้างรายการทั้งหมดที่สแกน?')) {
-        checkedItems = [];
+    function clearChecked() {
+      if (confirm('ล้างรายการทั้งหมด?')) {
+        checkedProducts = [];
         renderUI();
       }
     }
 
     async function submitCheck() {
-      if (checkedItems.length === 0) return alert('กรุณาสแกนสินค้าก่อนบันทึก');
+      if (checkedProducts.length === 0) return showToast('กรุณาสแกนสินค้าก่อน', 'error');
       
-      const user = firebase.auth().currentUser;
-      const refId = `report_${Date.now()}`;
-      
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = '⏳ กำลังบันทึก...';
+
       try {
-        await db.ref('stock_reports').child(refId).set({
+        const user = firebase.auth().currentUser;
+        const reportId = `report_${Date.now()}`;
+        
+        await db.ref('stock_reports').child(reportId).set({
           timestamp: firebase.database.ServerValue.TIMESTAMP,
           staff: user ? user.email : 'Unknown',
-          total: checkedItems.length,
-          items: checkedItems
+          totalItems: checkedProducts.length,
+          items: checkedProducts
         });
-        showToast('บันทึกข้อมูลการตรวจสอบสำเร็จ!', 'success');
-        checkedItems = [];
+
+        showToast('บันทึกผลตรวจสอบสำเร็จ!', 'success');
+        checkedProducts = [];
         renderUI();
       } catch (e) {
-        showToast('เกิดข้อผิดพลาดในการบันทึก', 'error');
+        showToast('เกิดข้อผิดพลาดในการส่งข้อมูล', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
       }
+    }
+
+    function forceSync() {
+      const icon = document.getElementById('sync-icon');
+      icon.classList.add('animate-spin');
+      loadAllData().then(() => {
+        setTimeout(() => icon.classList.remove('animate-spin'), 600);
+        showToast('อัปเดตข้อมูลคลังล่าสุดแล้ว', 'success');
+      });
     }
 
     function showToast(msg, type) {
       const container = document.getElementById('toast-container');
       const t = document.createElement('div');
-      t.className = `toast show`;
-      if(type === 'error') t.style.borderLeftColor = '#ef4444';
+      t.className = 'toast';
       if(type === 'success') t.style.borderLeftColor = '#10b981';
+      if(type === 'error') t.style.borderLeftColor = '#ef4444';
       t.textContent = msg;
       container.appendChild(t);
+      setTimeout(() => t.classList.add('show'), 10);
       setTimeout(() => {
         t.classList.remove('show');
         setTimeout(() => t.remove(), 300);
       }, 3000);
     }
 
-    // --- Init ---
+    function toggleDrawer() {
+      document.getElementById('drawer').classList.toggle('open');
+      document.getElementById('drawer-overlay').classList.toggle('open');
+    }
+
+    function doLogout() {
+      firebase.auth().signOut().then(() => window.location.href = 'login.html');
+    }
+
+    // --- 🚀 Start ---
     document.getElementById('sn-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handleScan();
+      if (e.key === 'Enter') handleManualScan();
     });
 
     firebase.auth().onAuthStateChanged(user => {
       if (!user) {
         window.location.href = 'login.html';
       } else {
-        document.getElementById('u-name').textContent = user.email.split('@')[0];
-        document.getElementById('u-initial').textContent = user.email[0].toUpperCase();
-        loadStockData();
+        const name = user.email.split('@')[0];
+        document.getElementById('u-name').textContent = name;
+        document.getElementById('u-initial').textContent = name[0].toUpperCase();
+        loadAllData();
       }
     });
   </script>
