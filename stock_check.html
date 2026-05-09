@@ -471,6 +471,7 @@
     }
 
     // โหลดข้อมูล + ลอจิกจัดการ S/N ซ้ำ
+// โหลดข้อมูล + ลอจิกจัดการ S/N ซ้ำ (เวอร์ชันโหลดเร็ว ทยอยแสดงผล)
     async function loadProducts(forceUpdate = false) {
       try {
         if (!forceUpdate) {
@@ -493,50 +494,58 @@
           { ref: 'reserve_warehouse', name: 'Reserve' }
         ];
 
-        const rawProducts = [];
-        const results = await Promise.allSettled(
-          warehouses.map(w => db.ref(w.ref).once('value'))
-        );
+        // เคลียร์ข้อมูลเตรียมรับของใหม่
+        allProducts = [];
+        const productMap = {};
 
-        results.forEach((result, idx) => {
-          if (result.status === 'fulfilled' && result.value.exists()) {
-            Object.entries(result.value.val()).forEach(([key, product]) => {
-              rawProducts.push({
-                id: key,
-                name: product.name || product.product_name || '-',
-                sn: product.sn || 'N/A',
-                warehouse: warehouses[idx].name,
-                sku: product.sku || '-'
+        if (forceUpdate) showToast('กำลังซิงค์ข้อมูลจาก 4 คลัง...', 'info');
+
+        // ทยอยโหลดและแสดงผลทันทีที่แต่ละคลังเสร็จ (ไม่ต้องรอพร้อมกัน)
+        const fetchPromises = warehouses.map(async (w) => {
+          try {
+            const snap = await db.ref(w.ref).once('value');
+            if (snap.exists()) {
+              Object.entries(snap.val()).forEach(([key, product]) => {
+                // ดักจับบั๊กกรณี S/N เป็นตัวเลขล้วน (แปลงเป็น String ก่อน)
+                const snVal = product.sn || product.serial_number || 'N/A';
+                const snKey = String(snVal).toUpperCase(); 
+
+                if (productMap[snKey]) {
+                  if (!productMap[snKey].warehouse.includes(w.name)) {
+                    productMap[snKey].warehouse += `, ${w.name}`;
+                    productMap[snKey].isDuplicate = true;
+                  }
+                } else {
+                  productMap[snKey] = {
+                    id: key,
+                    name: product.name || product.product_name || '-',
+                    sn: String(snVal),
+                    warehouse: w.name,
+                    sku: product.sku || '-',
+                    isDuplicate: false
+                  };
+                }
               });
-            });
+
+              // อัปเดตข้อมูลขึ้นหน้าจอทันทีที่คลังนี้เสร็จ
+              allProducts = Object.values(productMap);
+              renderProducts();
+            }
+          } catch (err) {
+            console.error(`โหลดคลัง ${w.name} ไม่สำเร็จ:`, err);
           }
         });
 
-        // ลอจิกจัดการ S/N ซ้ำข้ามคลัง (Deduplication)
-        const productMap = {};
-        rawProducts.forEach(p => {
-            const snKey = p.sn.toUpperCase();
-            if (productMap[snKey]) {
-                // ถ้ามี S/N นี้อยู่แล้ว ให้เพิ่มชื่อคลังเข้าไปต่อท้าย
-                if (!productMap[snKey].warehouse.includes(p.warehouse)) {
-                    productMap[snKey].warehouse += `, ${p.warehouse}`;
-                    productMap[snKey].isDuplicate = true; // Flag ว่าอยู่หลายคลัง
-                }
-            } else {
-                productMap[snKey] = { ...p, isDuplicate: false };
-            }
-        });
-
-        allProducts = Object.values(productMap);
+        // รอจนครบทุกคลังเพื่อทำการเซฟลง Cache เอาไว้ใช้รอบหน้า
+        await Promise.all(fetchPromises);
 
         localStorage.setItem(CACHE_KEY, JSON.stringify({
           products: allProducts,
           timestamp: Date.now()
         }));
 
-        renderProducts();
         updateSyncTime();
-        if(forceUpdate) showToast('อัปเดตข้อมูลสต็อกจากระบบแล้ว', 'success');
+        if (forceUpdate) showToast('ดึงข้อมูลสต็อกครบทุกคลังแล้ว!', 'success');
 
       } catch (error) {
         console.error('Error:', error);
