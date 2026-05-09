@@ -11,75 +11,73 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
   <style>
-    * { box-sizing: border-box; }
-    body {
-      background: #f5f5f7;
-      font-family: 'IBM Plex Sans Thai', sans-serif;
-      color: #1a1a2e;
-      margin: 0;
-      min-height: 100vh;
-    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: #f5f5f7; font-family: 'IBM Plex Sans Thai', sans-serif; color: #1a1a2e; margin: 0; }
 
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background-image: radial-gradient(circle, rgba(255, 87, 34, .08) 1px, transparent 1px);
-      background-size: 24px 24px;
-      pointer-events: none;
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 220px; flex-shrink: 0;
+      background: #ffffff;
+      border-right: 1px solid #ececec;
+      display: flex; flex-direction: column;
+      padding: 28px 0;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 40;
     }
-
-    body::after {
-      content: '';
-      position: fixed;
-      top: -160px;
-      right: -160px;
-      z-index: 0;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 87, 34, .12) 0%, transparent 70%);
-      pointer-events: none;
+    .sidebar-logo {
+      padding: 0 20px 28px;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 16px;
     }
+    .sidebar-logo .brand { font-size: .85rem; font-weight: 800; letter-spacing: .04em; color: #1a1a2e; }
+    .sidebar-logo .brand span { color: #ff5722; }
+    .sidebar-logo .sub { font-size: .65rem; color: #aaa; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin-top: 2px; }
 
-    .container {
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px; font-size: .82rem; font-weight: 600;
+      color: #9ca3af; text-decoration: none; border-radius: 0;
+      transition: color .15s, background .15s;
       position: relative;
-      z-index: 1;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 24px;
     }
+    .nav-item.active { color: #ff5722; background: #fff4f1; }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+      width: 3px; background: #ff5722; border-radius: 0 3px 3px 0;
+    }
+    .nav-item:hover:not(.active) { color: #374151; background: #fafafa; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 32px;
-    }
+    .nav-section { font-size: .6rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: #d1d5db; padding: 14px 20px 6px; }
 
-    .header-title {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #1a1a2e;
-    }
+    .sidebar-footer { margin-top: auto; padding: 16px 20px 0; border-top: 1px solid #f0f0f0; }
+    .user-chip { display: flex; align-items: center; gap: 10px; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#ff5722,#ff7043);
+      display: flex; align-items: center; justify-content: center; color: #fff; font-size: .75rem; font-weight: 700; }
+    .user-name { font-size: .8rem; font-weight: 600; color: #374151; }
+    .user-role { font-size: .65rem; color: #9ca3af; }
 
-    .header-title span {
-      color: #ff5722;
-    }
+    /* ── MAIN CONTENT ── */
+    .page-wrap { margin-left: 220px; min-height: 100vh; padding-bottom: 80px; }
 
-    .header-info {
-      font-size: .85rem;
-      color: #9ca3af;
-      text-align: right;
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: #fff; border-bottom: 1px solid #ececec;
+      padding: 20px 32px; display: flex; align-items: center; justify-content: space-between;
     }
+    .page-title { font-size: 1.4rem; font-weight: 800; color: #1a1a2e; }
+
+    /* ── CONTENT ── */
+    .page-content { padding: 32px; }
+
+    .card { background: #fff; border: 1px solid #ececec; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.04); }
 
     .input-section {
       background: #fff;
       border: 1px solid #ececec;
       border-radius: 16px;
       padding: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, .05);
+      box-shadow: 0 2px 10px rgba(0,0,0,.04);
       margin-bottom: 24px;
     }
 
@@ -148,6 +146,7 @@
 
     .btn-search:hover {
       transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(255, 87, 34, .45);
     }
 
     .content-wrapper {
@@ -161,11 +160,11 @@
       background: #fff;
       border: 1px solid #ececec;
       border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, .05);
+      box-shadow: 0 2px 10px rgba(0,0,0,.04);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      height: 600px;
+      height: 500px;
     }
 
     .column-header {
@@ -271,11 +270,6 @@
       word-break: break-all;
     }
 
-    .selected-item-meta {
-      font-size: .75rem;
-      color: #6b7280;
-    }
-
     .btn-remove {
       background: #fecaca;
       color: #dc2626;
@@ -285,7 +279,6 @@
       cursor: pointer;
       font-size: .75rem;
       font-weight: 600;
-      transition: all .2s;
       flex-shrink: 0;
     }
 
@@ -300,7 +293,6 @@
       justify-content: center;
       color: #c4c4cc;
       font-size: .9rem;
-      text-align: center;
       flex: 1;
       padding: 20px;
     }
@@ -337,7 +329,6 @@
       font-family: 'IBM Plex Sans Thai', sans-serif;
       font-size: .95rem;
       box-shadow: 0 4px 18px rgba(255, 87, 34, .35);
-      transition: all .2s;
     }
 
     .btn-primary:hover {
@@ -399,103 +390,221 @@
       display: flex;
     }
 
-    @media (max-width: 1024px) {
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #fff; border-top: 1px solid #ececec;
+      display: flex; justify-content: space-around; gap: 4px;
+      padding: 8px 0; z-index: 50;
+    }
+    .bn-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 8px; font-size: .65rem; font-weight: 600; color: #9ca3af;
+      text-decoration: none; border: none; background: none; cursor: pointer;
+      transition: color .15s;
+    }
+    .bn-item:hover { color: #ff5722; }
+    .bn-item.active { color: #ff5722; }
+    .bn-item svg { width: 20px; height: 20px; }
+
+    /* ── DRAWER ── */
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 48; display: none; }
+    .drawer-overlay.open { display: block; }
+    .drawer {
+      position: fixed; bottom: 0; left: 0; right: 0; max-height: 80vh;
+      background: #fff; border-top: 1px solid #ececec; border-radius: 20px 20px 0 0;
+      z-index: 49; overflow-y: auto; transform: translateY(100%); transition: transform .3s;
+      padding-bottom: 20px;
+    }
+    .drawer.open { transform: translateY(0); }
+    .drawer-handle {
+      height: 4px; width: 40px; background: #d1d5db; border-radius: 2px;
+      margin: 12px auto; flex-shrink: 0;
+    }
+    .drawer-title { font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: #9ca3af; padding: 12px 20px 8px; }
+    .drawer-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 20px; font-size: .85rem; font-weight: 600;
+      color: #374151; text-decoration: none; border: none; background: none;
+      cursor: pointer; transition: background .15s;
+      width: 100%; text-align: left;
+    }
+    .drawer-item:hover { background: #f9f9f9; }
+    .drawer-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .drawer-sep { height: 1px; background: #f0f0f0; margin: 8px 0; }
+
+    @media (max-width: 900px) {
       .content-wrapper {
         grid-template-columns: 1fr;
       }
     }
 
-    @media (max-width: 640px) {
-      .container { padding: 16px; }
-      .header { flex-direction: column; gap: 12px; }
-      .input-group { flex-direction: column; }
-      .btn-search { width: 100%; }
-      .button-section { flex-direction: column; }
-      .btn-primary, .btn-secondary { width: 100%; }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .page-wrap { margin-left: 0; }
     }
 
     .product-list::-webkit-scrollbar { width: 8px; }
-    .product-list::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    .product-list::-webkit-scrollbar-track { background: #f1f1f1; }
     .product-list::-webkit-scrollbar-thumb { background: #ff5722; border-radius: 10px; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="header">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">AdvancedPlus <span>Cloud</span></div>
+      <div class="sub">Stock Check</div>
+    </div>
+
+    <div class="nav-section">หลัก</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Dashboard
+    </a>
+    <a href="index.html" class="nav-item">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      รับเข้า
+    </a>
+    <a href="inventory.html" class="nav-item">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>
+      คลัง
+    </a>
+    <a href="outbound.html" class="nav-item">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+      ขายออก
+    </a>
+    <a href="stock_check.html" class="nav-item active">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+      ตรวจสอบสินค้า
+    </a>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar" id="user-initials">U</div>
+        <div>
+          <div class="user-name" id="user-name">ผู้ใช้</div>
+          <div class="user-role" id="user-email">loading...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="page-wrap">
+    <div class="page-header">
       <div>
-        <div class="header-title">ตรวจสอบ<span>สินค้า</span></div>
-        <div class="header-info">
-          <span style="font-weight:600;color:#6b7280;">ครั้งล่าสุด:</span>
-          <span id="last-check-date">-</span>
-        </div>
+        <div class="page-title">ตรวจสอบสินค้า</div>
       </div>
+      <div style="font-size:.75rem;color:#9ca3af">ครั้งล่าสุด: <span id="last-check-date">-</span></div>
     </div>
 
-    <div class="error-message" id="error-msg">
-      <svg style="width:20px;height:20px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-      <span id="error-text">เกิดข้อผิดพลาด</span>
-    </div>
-
-    <div class="success-message" id="success-msg">
-      <svg style="width:20px;height:20px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-      </svg>
-      <span id="success-text">บันทึกการตรวจสอบเรียบร้อยแล้ว</span>
-    </div>
-
-    <div class="input-section">
-      <div class="input-section-title">
-        <svg style="width:16px;height:16px" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+    <div class="page-content">
+      <div class="error-message" id="error-msg">
+        <svg style="width:20px;height:20px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        ค้นหาสินค้า
+        <span id="error-text">เกิดข้อผิดพลาด</span>
       </div>
-      <div class="input-group">
-        <div class="input-group-item">
-          <div class="field-label">S/N (Serial Number)</div>
-          <input id="sn-input" type="text" class="field" placeholder="ใส่ S/N สินค้า" autocomplete="off" />
-        </div>
-        <button class="btn-search" onclick="searchBySN()">ค้นหา</button>
-      </div>
-    </div>
 
-    <div class="content-wrapper">
-      <div class="column-card">
-        <div class="column-header">
-          <span>สินค้าทั้งหมด</span>
-          <span class="column-count" id="all-products-count">0</span>
+      <div class="success-message" id="success-msg">
+        <svg style="width:20px;height:20px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span id="success-text">บันทึกการตรวจสอบเรียบร้อยแล้ว</span>
+      </div>
+
+      <div class="input-section">
+        <div class="input-section-title">
+          <svg style="width:16px;height:16px" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          ค้นหาสินค้า
         </div>
-        <div class="product-list" id="all-products-list">
-          <div class="empty-state">
-            <div class="loading-spinner"></div>
-            <div>กำลังโหลดข้อมูล...</div>
+        <div class="input-group">
+          <div class="input-group-item">
+            <div class="field-label">S/N (Serial Number)</div>
+            <input id="sn-input" type="text" class="field" placeholder="ใส่ S/N สินค้า" autocomplete="off" />
+          </div>
+          <button class="btn-search" onclick="searchBySN()">ค้นหา</button>
+        </div>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="column-card">
+          <div class="column-header">
+            <span>สินค้าทั้งหมด</span>
+            <span class="column-count" id="all-products-count">0</span>
+          </div>
+          <div class="product-list" id="all-products-list">
+            <div class="empty-state">
+              <div class="loading-spinner"></div>
+              <div>กำลังโหลดข้อมูล...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="column-card">
+          <div class="column-header">
+            <span>สินค้าที่ตรวจสอบแล้ว</span>
+            <span class="column-count" id="checked-products-count">0</span>
+          </div>
+          <div class="product-list" id="checked-products-list">
+            <div class="empty-state">
+              <svg style="width:40px;height:40px;margin-bottom:8px;opacity:.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <div>ยังไม่มีสินค้าที่ตรวจสอบ</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="column-card">
-        <div class="column-header">
-          <span>สินค้าที่ตรวจสอบแล้ว</span>
-          <span class="column-count" id="checked-products-count">0</span>
-        </div>
-        <div class="product-list" id="checked-products-list">
-          <div class="empty-state">
-            <svg style="width:40px;height:40px;margin-bottom:8px;opacity:.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <div>ยังไม่มีสินค้าที่ตรวจสอบ</div>
-          </div>
-        </div>
+      <div class="button-section">
+        <button class="btn-secondary" onclick="clearAll()">ล้างข้อมูล</button>
+        <button class="btn-primary" id="save-btn" onclick="saveStockCheck()">บันทึกการตรวจสอบ</button>
       </div>
     </div>
+  </div>
 
-    <div class="button-section">
-      <button class="btn-secondary" onclick="clearAll()">ล้างข้อมูล</button>
-      <button class="btn-primary" id="save-btn" onclick="saveStockCheck()">บันทึกการตรวจสอบ</button>
-    </div>
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="bn-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Dashboard</a>
+    <a href="index.html" class="bn-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>รับเข้า</a>
+    <a href="inventory.html" class="bn-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>คลัง</a>
+    <a href="outbound.html" class="bn-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>ขายออก</a>
+    <button class="bn-item active" onclick="toggleDrawer()"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>เพิ่มเติม</button>
+  </nav>
+
+  <!-- DRAWER -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-handle"></div>
+
+    <div class="drawer-title">คลังสินค้าย่อย</div>
+    <a href="service_warehouse.html" class="drawer-item">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0v-5a1 1 0 011-1h2a1 1 0 011 1v5"/></svg>
+      คลังบริการ
+    </a>
+    <a href="online_warehouse.html" class="drawer-item">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      คลังออนไลน์
+    </a>
+    <a href="reserve_warehouse.html" class="drawer-item">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      คลังคิดตั้ง
+    </a>
+    <div class="drawer-sep"></div>
+
+    <div class="drawer-title">เครื่องมือ</div>
+    <a href="tracker.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>S/N Tracker</a>
+    <a href="stock_check.html" class="drawer-item" style="color:#ff5722"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>ตรวจสอบสินค้า</a>
+    <a href="invoice_lookup.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Invoice Lookup</a>
+    <a href="export.html" class="drawer-item"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Export รายงาน</a>
+    <div class="drawer-sep"></div>
+    <button class="drawer-item" onclick="doLogout()" style="color:#dc2626"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>ออกจากระบบ</button>
   </div>
 
   <script>
@@ -511,14 +620,24 @@
     const db = firebase.database();
     let allProducts = [];
     let checkedProducts = [];
-    let isLoading = true;
+    const CACHE_KEY = 'stock_check_cache';
+    const CACHE_TIME = 5 * 60 * 1000; // 5 นาที
 
     async function loadProducts() {
-      isLoading = true;
-      showErrorMsg(false);
-      
       try {
-        // ดึงจาก 4 คลัง
+        // ตรวจสอบ cache
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const cacheData = JSON.parse(cached);
+          if (Date.now() - cacheData.timestamp < CACHE_TIME) {
+            allProducts = cacheData.products;
+            renderProducts();
+            loadLastCheckDate();
+            return;
+          }
+        }
+
+        // ดึงจาก 4 คลัง พร้อมกัน (parallel loading)
         const warehouses = [
           { ref: 'inventory', name: 'Inventory' },
           { ref: 'service_warehouse', name: 'Service' },
@@ -527,53 +646,43 @@
         ];
 
         allProducts = [];
-        let totalLoaded = 0;
+        const results = await Promise.allSettled(
+          warehouses.map(w => db.ref(w.ref).once('value'))
+        );
 
-        for (const warehouse of warehouses) {
-          try {
-            const snapshot = await db.ref(warehouse.ref).once('value');
-            
-            if (snapshot.exists()) {
-              Object.entries(snapshot.val()).forEach(([key, product]) => {
-                allProducts.push({
-                  id: key,
-                  name: product.name || product.product_name || '-',
-                  sn: product.sn || 'N/A',
-                  warehouse: warehouse.name,
-                  sku: product.sku || '-'
-                });
+        results.forEach((result, idx) => {
+          if (result.status === 'fulfilled' && result.value.exists()) {
+            Object.entries(result.value.val()).forEach(([key, product]) => {
+              allProducts.push({
+                id: key,
+                name: product.name || product.product_name || '-',
+                sn: product.sn || 'N/A',
+                warehouse: warehouses[idx].name,
+                sku: product.sku || '-'
               });
-              totalLoaded++;
-            }
-          } catch (error) {
-            // ถ้าหาไม่เจอคลังนี้ ข้ามไป (ไม่ต้องแสดง error)
-            console.log(`ไม่พบข้อมูล: ${warehouse.name}`);
+            });
           }
-        }
+        });
 
-        // ถ้าไม่พบข้อมูลจากคลังไหนเลย
-        if (totalLoaded === 0) {
-          showErrorMsg(true, 'ไม่พบข้อมูลสินค้า');
-          renderProductsEmpty();
-          isLoading = false;
-          return;
-        }
-
-        // ลบข้อมูลซ้ำ (เหมือนเดิม)
-        allProducts = allProducts.filter((p, i, self) => 
+        // ลบข้อมูลซ้ำ
+        allProducts = allProducts.filter((p, i, self) =>
           i === self.findIndex(x => x.sn === p.sn)
         );
+
+        // บันทึกลง cache
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+          products: allProducts,
+          timestamp: Date.now()
+        }));
 
         renderProducts();
         loadLastCheckDate();
         showErrorMsg(false);
       } catch (error) {
         console.error('Error:', error);
-        showErrorMsg(true, 'เกิดข้อผิดพลาดในการโหลดข้อมูล');
+        showErrorMsg(true, 'ไม่พบข้อมูลสินค้า');
         renderProductsEmpty();
       }
-
-      isLoading = false;
     }
 
     function renderProductsEmpty() {
@@ -608,7 +717,7 @@
       document.getElementById('checked-products-count').textContent = checkedProducts.length;
 
       if (!checkedProducts.length) {
-        list.innerHTML = '<div class="empty-state"><svg style="width:40px;height:40px;margin-bottom:8px;opacity:.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><div>ยังไม่มีสินค้าที่ตรวจสอบ</div></div>';
+        list.innerHTML = '<div class="empty-state"><svg style="width:40px;height:40px;margin-bottom:8px;opacity:.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><div>ยังไม่มีสินค้า</div></div>';
         return;
       }
 
@@ -619,7 +728,6 @@
             <button class="btn-remove" onclick="removeProduct(${i})">ลบ</button>
           </div>
           <div class="selected-item-sn">S/N: ${p.sn}</div>
-          <div class="selected-item-meta">คลัง: ${p.warehouse}</div>
         </div>
       `).join('');
     }
@@ -683,24 +791,21 @@
       try {
         const user = firebase.auth().currentUser;
         if (!user) {
-          showErrorMsg(true, 'ไม่พบผู้ใช้ที่เข้าสู่ระบบ');
+          showErrorMsg(true, 'ไม่พบผู้ใช้');
           btn.disabled = false;
           btn.textContent = 'บันทึกการตรวจสอบ';
           return;
         }
 
-        // สร้าง ID สำหรับการตรวจสอบ
         const checkId = 'check_' + Date.now();
         const now = new Date();
 
-        // บันทึกลงฐานข้อมูล
-        const checkData = {
+        await db.ref('stock_checks/' + checkId).set({
           checkId: checkId,
           status: 'completed',
           timestamp: firebase.database.ServerValue.TIMESTAMP,
           dateTime: now.toLocaleString('th-TH'),
           userId: user.uid,
-          userEmail: user.email,
           totalItems: checkedProducts.length,
           items: checkedProducts.map(p => ({
             sn: p.sn,
@@ -708,19 +813,12 @@
             warehouse: p.warehouse,
             sku: p.sku
           }))
-        };
+        });
 
-        // ✅ บันทึกลง Firebase Realtime Database
-        await db.ref('stock_checks/' + checkId).set(checkData);
-
-        console.log('✅ บันทึกสำเร็จ:', checkId);
-
-        // แสดงข้อความสำเร็จ
         document.getElementById('success-text').textContent = `บันทึก ${checkedProducts.length} รายการสำเร็จ`;
         document.getElementById('success-msg').classList.add('show');
         setTimeout(() => document.getElementById('success-msg').classList.remove('show'), 3000);
 
-        // รีเซ็ตข้อมูล
         checkedProducts = [];
         renderProducts();
         renderCheckedProducts();
@@ -729,8 +827,8 @@
         btn.disabled = false;
         btn.textContent = 'บันทึกการตรวจสอบ';
       } catch (error) {
-        console.error('❌ Error:', error);
-        showErrorMsg(true, 'ผิดพลาดในการบันทึก: ' + error.message);
+        console.error('Error:', error);
+        showErrorMsg(true, 'ผิดพลาดในการบันทึก');
         btn.disabled = false;
         btn.textContent = 'บันทึกการตรวจสอบ';
       }
@@ -742,7 +840,7 @@
           .orderByChild('timestamp')
           .limitToLast(1)
           .once('value');
-        
+
         if (snap.val()) {
           const data = Object.values(snap.val())[0];
           const date = new Date(data.timestamp).toLocaleDateString('th-TH', {
@@ -769,16 +867,40 @@
       }
     }
 
-    // Keyboard enter
+    function toggleDrawer() {
+      const d = document.getElementById('drawer');
+      const o = document.getElementById('drawer-overlay');
+      if (d) d.classList.toggle('open');
+      if (o) o.classList.toggle('open');
+    }
+
+    function closeDrawer() {
+      const d = document.getElementById('drawer');
+      const o = document.getElementById('drawer-overlay');
+      if (d) d.classList.remove('open');
+      if (o) o.classList.remove('open');
+    }
+
+    function doLogout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = 'login.html';
+      });
+    }
+
     document.getElementById('sn-input').addEventListener('keydown', e => {
       if (e.key === 'Enter') searchBySN();
     });
 
-    // Check auth and load data
     firebase.auth().onAuthStateChanged(user => {
       if (!user) {
         window.location.href = 'login.html';
       } else {
+        // แสดงชื่อผู้ใช้
+        const name = user.email?.split('@')[0] || 'User';
+        document.getElementById('user-name').textContent = name;
+        document.getElementById('user-email').textContent = user.email;
+        document.getElementById('user-initials').textContent = name[0].toUpperCase();
+        
         loadProducts();
       }
     });
