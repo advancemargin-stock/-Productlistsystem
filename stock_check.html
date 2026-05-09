@@ -100,9 +100,6 @@
       text-transform: uppercase;
       color: #9ca3af;
       margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
     }
 
     .input-group {
@@ -124,8 +121,8 @@
       padding: 12px 14px;
       font-size: .9rem;
       font-family: 'IBM Plex Sans Thai', sans-serif;
-      transition: border-color .2s, box-shadow .2s, background .2s;
       outline: none;
+      transition: all .2s;
     }
 
     .field:focus {
@@ -145,13 +142,12 @@
       font-family: 'IBM Plex Sans Thai', sans-serif;
       font-size: .9rem;
       box-shadow: 0 4px 12px rgba(255, 87, 34, .35);
-      transition: transform .15s, box-shadow .15s;
       white-space: nowrap;
+      transition: all .2s;
     }
 
     .btn-search:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(255, 87, 34, .45);
     }
 
     .content-wrapper {
@@ -224,13 +220,20 @@
       flex: 1;
     }
 
-    .product-warehouse {
+    .product-info {
       font-size: .75rem;
       color: #9ca3af;
-      background: #f0f0f0;
+      margin-top: 3px;
+    }
+
+    .product-warehouse {
+      font-size: .75rem;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.2);
       padding: 4px 8px;
       border-radius: 4px;
       margin-left: 8px;
+      flex-shrink: 0;
     }
 
     .selected-item {
@@ -247,13 +250,15 @@
     .selected-item-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
+      gap: 8px;
     }
 
     .selected-item-name {
       font-weight: 700;
       color: #1e40af;
       font-size: .9rem;
+      flex: 1;
     }
 
     .selected-item-sn {
@@ -266,6 +271,11 @@
       word-break: break-all;
     }
 
+    .selected-item-meta {
+      font-size: .75rem;
+      color: #6b7280;
+    }
+
     .btn-remove {
       background: #fecaca;
       color: #dc2626;
@@ -275,8 +285,8 @@
       cursor: pointer;
       font-size: .75rem;
       font-weight: 600;
-      margin-left: 8px;
       transition: all .2s;
+      flex-shrink: 0;
     }
 
     .btn-remove:hover {
@@ -284,10 +294,30 @@
     }
 
     .empty-state {
-      text-align: center;
-      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       color: #c4c4cc;
       font-size: .9rem;
+      text-align: center;
+      flex: 1;
+      padding: 20px;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 87, 34, 0.3);
+      border-top-color: #ff5722;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     .button-section {
@@ -352,6 +382,23 @@
       display: flex;
     }
 
+    .error-message {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 14px;
+      color: #dc2626;
+      font-size: .9rem;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .error-message.show {
+      display: flex;
+    }
+
     @media (max-width: 1024px) {
       .content-wrapper {
         grid-template-columns: 1fr;
@@ -385,6 +432,13 @@
       </div>
     </div>
 
+    <div class="error-message" id="error-msg">
+      <svg style="width:20px;height:20px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span id="error-text">เกิดข้อผิดพลาด</span>
+    </div>
+
     <div class="success-message" id="success-msg">
       <svg style="width:20px;height:20px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -415,7 +469,10 @@
           <span class="column-count" id="all-products-count">0</span>
         </div>
         <div class="product-list" id="all-products-list">
-          <div class="empty-state">กำลังโหลดข้อมูล...</div>
+          <div class="empty-state">
+            <div class="loading-spinner"></div>
+            <div>กำลังโหลดข้อมูล...</div>
+          </div>
         </div>
       </div>
 
@@ -425,7 +482,12 @@
           <span class="column-count" id="checked-products-count">0</span>
         </div>
         <div class="product-list" id="checked-products-list">
-          <div class="empty-state">ยังไม่มีสินค้าที่ตรวจสอบ</div>
+          <div class="empty-state">
+            <svg style="width:40px;height:40px;margin-bottom:8px;opacity:.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div>ยังไม่มีสินค้าที่ตรวจสอบ</div>
+          </div>
         </div>
       </div>
     </div>
@@ -449,60 +511,75 @@
     const db = firebase.database();
     let allProducts = [];
     let checkedProducts = [];
+    let isLoading = true;
 
     async function loadProducts() {
+      isLoading = true;
+      showErrorMsg(false);
+      
       try {
-        const [serviceSnap, onlineSnap, reserveSnap] = await Promise.all([
-          db.ref('service_warehouse').once('value'),
-          db.ref('online_warehouse').once('value'),
-          db.ref('reserve_warehouse').once('value')
-        ]);
+        // ดึงจาก 4 คลัง
+        const warehouses = [
+          { ref: 'inventory', name: 'Inventory' },
+          { ref: 'service_warehouse', name: 'Service' },
+          { ref: 'online_warehouse', name: 'Online' },
+          { ref: 'reserve_warehouse', name: 'Reserve' }
+        ];
 
         allProducts = [];
+        let totalLoaded = 0;
 
-        if (serviceSnap.val()) {
-          Object.entries(serviceSnap.val()).forEach(([key, product]) => {
-            allProducts.push({
-              id: key,
-              name: product.name || product.product_name || '-',
-              sn: product.sn || 'N/A',
-              warehouse: 'Service',
-              sku: product.sku || '-'
-            });
-          });
+        for (const warehouse of warehouses) {
+          try {
+            const snapshot = await db.ref(warehouse.ref).once('value');
+            
+            if (snapshot.exists()) {
+              Object.entries(snapshot.val()).forEach(([key, product]) => {
+                allProducts.push({
+                  id: key,
+                  name: product.name || product.product_name || '-',
+                  sn: product.sn || 'N/A',
+                  warehouse: warehouse.name,
+                  sku: product.sku || '-'
+                });
+              });
+              totalLoaded++;
+            }
+          } catch (error) {
+            // ถ้าหาไม่เจอคลังนี้ ข้ามไป (ไม่ต้องแสดง error)
+            console.log(`ไม่พบข้อมูล: ${warehouse.name}`);
+          }
         }
 
-        if (onlineSnap.val()) {
-          Object.entries(onlineSnap.val()).forEach(([key, product]) => {
-            allProducts.push({
-              id: key,
-              name: product.name || product.product_name || '-',
-              sn: product.sn || 'N/A',
-              warehouse: 'Online',
-              sku: product.sku || '-'
-            });
-          });
+        // ถ้าไม่พบข้อมูลจากคลังไหนเลย
+        if (totalLoaded === 0) {
+          showErrorMsg(true, 'ไม่พบข้อมูลสินค้า');
+          renderProductsEmpty();
+          isLoading = false;
+          return;
         }
 
-        if (reserveSnap.val()) {
-          Object.entries(reserveSnap.val()).forEach(([key, product]) => {
-            allProducts.push({
-              id: key,
-              name: product.name || product.product_name || '-',
-              sn: product.sn || 'N/A',
-              warehouse: 'Reserve',
-              sku: product.sku || '-'
-            });
-          });
-        }
-
-        allProducts = allProducts.filter((p, i, self) => i === self.findIndex(x => x.sn === p.sn));
+        // ลบข้อมูลซ้ำ (เหมือนเดิม)
+        allProducts = allProducts.filter((p, i, self) => 
+          i === self.findIndex(x => x.sn === p.sn)
+        );
 
         renderProducts();
         loadLastCheckDate();
+        showErrorMsg(false);
       } catch (error) {
-        alert('ไม่สามารถโหลดข้อมูล: ' + error.message);
+        console.error('Error:', error);
+        showErrorMsg(true, 'เกิดข้อผิดพลาดในการโหลดข้อมูล');
+        renderProductsEmpty();
       }
+
+      isLoading = false;
+    }
+
+    function renderProductsEmpty() {
+      const list = document.getElementById('all-products-list');
+      document.getElementById('all-products-count').textContent = '0';
+      list.innerHTML = '<div class="empty-state"><div>ไม่พบข้อมูล</div></div>';
     }
 
     function renderProducts() {
@@ -511,7 +588,7 @@
       document.getElementById('all-products-count').textContent = available.length;
 
       if (!available.length) {
-        list.innerHTML = '<div class="empty-state">ตรวจสอบเสร็จแล้ว</div>';
+        list.innerHTML = '<div class="empty-state"><svg style="width:40px;height:40px;margin-bottom:8px;opacity:.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><div>ตรวจสอบเสร็จแล้ว</div></div>';
         return;
       }
 
@@ -519,7 +596,7 @@
         <div class="product-item" onclick="addProduct('${p.sn}')">
           <div style="flex:1">
             <div class="product-name">${p.name}</div>
-            <div style="font-size:.75rem;color:#9ca3af;margin-top:4px">SKU: ${p.sku}</div>
+            <div class="product-info">SKU: ${p.sku}</div>
           </div>
           <span class="product-warehouse">${p.warehouse}</span>
         </div>
@@ -531,7 +608,7 @@
       document.getElementById('checked-products-count').textContent = checkedProducts.length;
 
       if (!checkedProducts.length) {
-        list.innerHTML = '<div class="empty-state">ยังไม่มีสินค้า</div>';
+        list.innerHTML = '<div class="empty-state"><svg style="width:40px;height:40px;margin-bottom:8px;opacity:.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><div>ยังไม่มีสินค้าที่ตรวจสอบ</div></div>';
         return;
       }
 
@@ -542,33 +619,42 @@
             <button class="btn-remove" onclick="removeProduct(${i})">ลบ</button>
           </div>
           <div class="selected-item-sn">S/N: ${p.sn}</div>
-          <div style="font-size:.75rem;color:#6b7280">คลัง: ${p.warehouse}</div>
+          <div class="selected-item-meta">คลัง: ${p.warehouse}</div>
         </div>
       `).join('');
     }
 
     function addProduct(sn) {
       if (checkedProducts.some(p => p.sn === sn)) {
-        alert('สินค้านี้ตรวจสอบแล้ว');
+        showErrorMsg(true, 'สินค้านี้ตรวจสอบแล้ว');
         return;
       }
       const product = allProducts.find(p => p.sn === sn);
       if (!product) {
-        alert('ไม่พบสินค้า');
+        showErrorMsg(true, 'ไม่พบสินค้า');
         return;
       }
       checkedProducts.push(product);
       renderProducts();
       renderCheckedProducts();
+      showErrorMsg(false);
     }
 
     function searchBySN() {
       const sn = document.getElementById('sn-input').value.trim();
-      if (!sn) return alert('ใส่ S/N');
+      if (!sn) {
+        showErrorMsg(true, 'ใส่ S/N สินค้า');
+        return;
+      }
       const product = allProducts.find(p => p.sn.toLowerCase() === sn.toLowerCase());
-      if (!product) return alert('ไม่พบ S/N: ' + sn);
+      if (!product) {
+        showErrorMsg(true, 'ไม่พบ S/N: ' + sn);
+        document.getElementById('sn-input').value = '';
+        return;
+      }
       addProduct(product.sn);
       document.getElementById('sn-input').value = '';
+      document.getElementById('sn-input').focus();
     }
 
     function removeProduct(idx) {
@@ -585,7 +671,10 @@
     }
 
     async function saveStockCheck() {
-      if (!checkedProducts.length) return alert('เพิ่มสินค้าก่อน');
+      if (!checkedProducts.length) {
+        showErrorMsg(true, 'เพิ่มสินค้าก่อนบันทึก');
+        return;
+      }
 
       const btn = document.getElementById('save-btn');
       btn.disabled = true;
@@ -593,17 +682,25 @@
 
       try {
         const user = firebase.auth().currentUser;
-        if (!user) return alert('ไม่พบผู้ใช้');
+        if (!user) {
+          showErrorMsg(true, 'ไม่พบผู้ใช้ที่เข้าสู่ระบบ');
+          btn.disabled = false;
+          btn.textContent = 'บันทึกการตรวจสอบ';
+          return;
+        }
 
+        // สร้าง ID สำหรับการตรวจสอบ
         const checkId = 'check_' + Date.now();
         const now = new Date();
 
-        await db.ref('stock_checks/' + checkId).set({
+        // บันทึกลงฐานข้อมูล
+        const checkData = {
           checkId: checkId,
           status: 'completed',
           timestamp: firebase.database.ServerValue.TIMESTAMP,
           dateTime: now.toLocaleString('th-TH'),
           userId: user.uid,
+          userEmail: user.email,
           totalItems: checkedProducts.length,
           items: checkedProducts.map(p => ({
             sn: p.sn,
@@ -611,12 +708,19 @@
             warehouse: p.warehouse,
             sku: p.sku
           }))
-        });
+        };
 
+        // ✅ บันทึกลง Firebase Realtime Database
+        await db.ref('stock_checks/' + checkId).set(checkData);
+
+        console.log('✅ บันทึกสำเร็จ:', checkId);
+
+        // แสดงข้อความสำเร็จ
         document.getElementById('success-text').textContent = `บันทึก ${checkedProducts.length} รายการสำเร็จ`;
         document.getElementById('success-msg').classList.add('show');
         setTimeout(() => document.getElementById('success-msg').classList.remove('show'), 3000);
 
+        // รีเซ็ตข้อมูล
         checkedProducts = [];
         renderProducts();
         renderCheckedProducts();
@@ -625,7 +729,8 @@
         btn.disabled = false;
         btn.textContent = 'บันทึกการตรวจสอบ';
       } catch (error) {
-        alert('ผิดพลาด: ' + error.message);
+        console.error('❌ Error:', error);
+        showErrorMsg(true, 'ผิดพลาดในการบันทึก: ' + error.message);
         btn.disabled = false;
         btn.textContent = 'บันทึกการตรวจสอบ';
       }
@@ -633,24 +738,49 @@
 
     async function loadLastCheckDate() {
       try {
-        const snap = await db.ref('stock_checks').orderByChild('timestamp').limitToLast(1).once('value');
+        const snap = await db.ref('stock_checks')
+          .orderByChild('timestamp')
+          .limitToLast(1)
+          .once('value');
+        
         if (snap.val()) {
           const data = Object.values(snap.val())[0];
           const date = new Date(data.timestamp).toLocaleDateString('th-TH', {
-            year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
           });
           document.getElementById('last-check-date').textContent = date;
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log('ไม่พบประวัติการตรวจสอบ');
+      }
     }
 
+    function showErrorMsg(show, message = '') {
+      const errorEl = document.getElementById('error-msg');
+      if (show) {
+        document.getElementById('error-text').textContent = message;
+        errorEl.classList.add('show');
+      } else {
+        errorEl.classList.remove('show');
+      }
+    }
+
+    // Keyboard enter
     document.getElementById('sn-input').addEventListener('keydown', e => {
       if (e.key === 'Enter') searchBySN();
     });
 
+    // Check auth and load data
     firebase.auth().onAuthStateChanged(user => {
-      if (!user) window.location.href = 'login.html';
-      else loadProducts();
+      if (!user) {
+        window.location.href = 'login.html';
+      } else {
+        loadProducts();
+      }
     });
   </script>
 </body>
